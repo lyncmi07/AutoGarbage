@@ -1,5 +1,5 @@
 #ifndef GC_LIB_H
-#define GB_LIB_H
+#define GC_LIB_H
 
 #include <unordered_set>
 
@@ -11,7 +11,7 @@ namespace gc
 
     size_t _heap_size = 0;
 
-    void* _heap_space = nullptr;
+    char* _heap_space = nullptr;
     size_t next_ptr_offset = 0;
 
     std::unordered_set<gc::object*> _white_objects;
@@ -29,7 +29,8 @@ namespace gc
     {
         if (next_ptr_offset + size >= _heap_size) throw std::bad_alloc();
 
-        void* p = _heap_space + next_ptr_offset;
+	char* pc = &(_heap_space[next_ptr_offset]);
+        void* p = (void*) pc;
         next_ptr_offset += size;
 
         return p;
