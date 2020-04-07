@@ -2,3 +2,4 @@ obj/
 a.out
 *.swp
 *.a
+*.gch

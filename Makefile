@@ -6,11 +6,14 @@ TARGET=a.out
 
 all=$(TARGET)
 
-$(TARGET): obj/main.o gclib/lib/libgc.a
+$(TARGET): obj/main.o gclib/lib/libgc.a gclib/include/gc.h.gch
 	$(CC) $(LDFLAGS) -o $@ $<
 
 obj/main.o: src/main.cpp gclib/include/*.h
 	$(CC) $(CCFLAGS) -o $@ -c $<
+
+gclib/include/gc.h.gch: gclib/include/*.h
+	$(CC) $(CCFLAGS) -c $<
 
 gclib/lib/libgc.a: gclib/obj/gc_statics.o gclib/obj/gc_functions.o
 	ar ru $@ $^
@@ -24,4 +27,4 @@ gclib/obj/gc_functions.o: gclib/src/gc_functions.cpp gclib/include/gc_statics.h
 
 
 clean:
-	rm -f obj/*.o $(TARGET) gclib/obj/*.o gclib/lib/*.a
+	rm -f obj/*.o $(TARGET) gclib/include/*.gch gclib/obj/*.o gclib/lib/*.a
