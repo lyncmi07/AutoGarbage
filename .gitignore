@@ -1,3 +1,4 @@
 obj/
 a.out
 *.swp
+*.a
