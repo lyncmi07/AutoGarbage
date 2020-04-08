@@ -14,10 +14,15 @@ namespace gc
             T* _object;
         public:
             field(T* object):
-            _object(object)
+                _object(object)
             {
                 ensure_gc_object(object);
             }
+
+	    T* operator->()
+	    {
+                return _object;
+	    }
     };
 }
 #endif

@@ -40,6 +40,7 @@ namespace gc
 
             }
 
+	    virtual bool* gc_fields_end() { return nullptr; }
         public:
 
             object():
@@ -49,8 +50,6 @@ namespace gc
 
             void* operator new(size_t size)
             {
-                std::cout << "The size is " << size << std::endl;
-
                 void* p = gc::malloc(size);
                 ((object*) p)->_size = size;
 
@@ -61,6 +60,12 @@ namespace gc
             {
                 return _size;
             }
+
+	    void debug_fields()
+	    {
+                std::cout << "The object starts at: " << this << std::endl;
+		std::cout << "The fields end at: " << ((unsigned long)gc_fields_end()) - ((unsigned long)this) << std::endl;
+	    }
     };
 
 }
