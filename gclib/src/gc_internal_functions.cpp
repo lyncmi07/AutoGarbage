@@ -1,6 +1,9 @@
+#include <iostream>
+
 #include "gc_internal_functions.h"
 #include "gc_static_ptr.h"
 #include "gc_statics.h"
+
 
 void gc::add_static(void* sptr)
 {
@@ -36,4 +39,29 @@ void gc::remove_static(void* sptr)
     {
         fwd_ptr->_back_static_object = back_ptr;
     }
+}
+
+void print_static_objects_list();
+void gc::print_gc_debug()
+{
+    std::cout << "--BEGIN GC DEBUG--" << std::endl;
+
+    print_static_objects_list();
+
+    std::cout << "--END GC DEBUG--" << std::endl;
+}
+
+void print_static_objects_list()
+{
+    std::cout << "static_objects list: { start_ptr -> ";
+
+    gc::static_ptr<bool>* current_ptr = gc::_static_objects_start_ptr;
+
+    while(current_ptr != nullptr)
+    {
+        std::cout << current_ptr << " -> ";
+        current_ptr = current_ptr->_fwd_static_object;
+    }
+
+    std::cout << "nullptr }" << std::endl;
 }
