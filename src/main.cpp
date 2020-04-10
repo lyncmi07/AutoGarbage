@@ -41,7 +41,7 @@ class B : public gc::object
 
 int main()
 {
-    gc::init_gc(64);
+    gc::init_gc(4096); // 4K
     std::cout << "Hello World!" << std::endl;
 
     /*for (unsigned int i = 0; i < 100; i++)
@@ -53,19 +53,19 @@ int main()
 
     }*/
     
-    B b;
+    gc::static_ptr<B> b(new B());
 
-    b.gc_mark();
-    b.debug_gc();
-
-    std::cout << "Inner B field A ";
-    b.a().debug_object()->debug_gc();
-
-    b.gc_mark();
-    b.debug_gc();
+    b->gc_mark();
+    b->debug_gc();
 
     std::cout << "Inner B field A ";
-    b.a().debug_object()->debug_gc();
+    b->a().debug_object()->debug_gc();
+
+    b->gc_mark();
+    b->debug_gc();
+
+    std::cout << "Inner B field A ";
+    b->a().debug_object()->debug_gc();
 
     /*std::cout << "Inner B field A ";
     b.a().debug_object()->debug_gc();

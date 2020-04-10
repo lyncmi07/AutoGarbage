@@ -3,6 +3,8 @@
 
 #include <unordered_set>
 
+#include "gc_static_ptr.h"
+
 namespace gc
 {
     class object;
@@ -15,6 +17,8 @@ namespace gc
     extern std::unordered_set<gc::object*> _black_objects;
 
     extern unsigned int _current_grey_objects;
+
+    extern gc::static_ptr<bool>* static_objects_start_ptr;
 }
 
 #endif
