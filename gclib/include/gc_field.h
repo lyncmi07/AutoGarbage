@@ -29,6 +29,11 @@ namespace gc
 	    {
 	        return _object;
 	    }
+
+	    void gc_mark()
+	    {
+		_object->gc_mark();
+	    }
     };
 }
 #endif
