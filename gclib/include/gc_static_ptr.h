@@ -27,6 +27,11 @@ namespace gc
                 gc::add_static(this);
             }
 
+            ~static_ptr()
+            {
+                gc::remove_static(this);
+            }
+
             T* operator->()
             {
                 return _object;

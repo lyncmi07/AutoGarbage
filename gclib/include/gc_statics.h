@@ -18,7 +18,7 @@ namespace gc
 
     extern unsigned int _current_grey_objects;
 
-    extern gc::static_ptr<bool>* static_objects_start_ptr;
+    extern gc::static_ptr<bool>* _static_objects_start_ptr;
 }
 
 #endif

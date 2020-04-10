@@ -15,5 +15,5 @@ namespace gc
 
     unsigned int _current_grey_objects = 0;
 
-    gc::static_ptr<bool>* static_objects_start_ptr;
+    gc::static_ptr<bool>* _static_objects_start_ptr;
 }
