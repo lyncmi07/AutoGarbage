@@ -1,6 +1,6 @@
 CC=g++
 LDFLAGS=-Wall -Lgclib/lib -lgc
-CCFLAGS=-Wall -std=c++17 -Igclib/include
+CCFLAGS=-Wall -std=c++17 -Igclib/include -g
 
 TARGET=a.out
 

@@ -21,7 +21,13 @@ namespace gc
 
 	    T* operator->()
 	    {
+		_object->gc_mark();
                 return _object;
+	    }
+
+	    T* debug_object()
+	    {
+	        return _object;
 	    }
     };
 }

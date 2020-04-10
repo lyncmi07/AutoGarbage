@@ -5,6 +5,7 @@
 
 #include "gc_statics.h"
 #include "gc_functions.h"
+#include "gc_field.h"
 
 namespace gc
 {
@@ -37,7 +38,13 @@ namespace gc
 
             void gc_grey_fields()
             {
+		gc::field<gc::object>* field_ptr = (gc::field<gc::object>*) (((unsigned long) this) + sizeof(void*));
+		bool* fields_end_ptr = gc_fields_end();
 
+		while ((bool*)field_ptr < fields_end_ptr)
+		{
+		    (*field_ptr)->gc_mark();
+		}
             }
 
 	    virtual bool* gc_fields_end() { return nullptr; }
@@ -61,10 +68,30 @@ namespace gc
                 return _size;
             }
 
+	    void gc_mark()
+	    {
+	        switch (_mark) //seg fault
+		{
+	            case 'B':
+	                return;
+		    case 'G':
+			gc_black();
+			break;
+		    case 'W':
+			gc_grey();
+			break;
+		}
+	    }
+
 	    void debug_fields()
 	    {
                 std::cout << "The object starts at: " << this << std::endl;
 		std::cout << "The fields end at: " << ((unsigned long)gc_fields_end()) - ((unsigned long)this) << std::endl;
+	    }
+
+	    void debug_gc()
+	    {
+                std::cout << "Marked: " << _mark << std::endl;
 	    }
     };
 
