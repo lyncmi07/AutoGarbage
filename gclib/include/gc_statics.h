@@ -19,6 +19,14 @@ namespace gc
     extern unsigned int _current_grey_objects;
 
     extern gc::static_ptr<bool>* _static_objects_start_ptr;
+
+    namespace heap
+    {
+        extern gc::object* _bottom;
+        extern gc::object* _top;
+        extern gc::object* _scan;
+        extern gc::object* _free;
+    }
 }
 
 #endif

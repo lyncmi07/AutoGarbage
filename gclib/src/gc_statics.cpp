@@ -15,5 +15,13 @@ namespace gc
 
     unsigned int _current_grey_objects = 0;
 
-    gc::static_ptr<bool>* _static_objects_start_ptr;
+    gc::static_ptr<bool>* _static_objects_start_ptr = nullptr;
+
+    namespace heap
+    {
+        gc::object* _bottom = nullptr;
+        gc::object* _top = nullptr;
+        gc::object* _scan = nullptr;
+        gc::object* _free = nullptr;
+    }
 }
