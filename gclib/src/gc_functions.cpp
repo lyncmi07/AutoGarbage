@@ -14,14 +14,6 @@ namespace gc
 
     void* malloc(size_t size)
     {
-        // if (next_ptr_offset + size >= _heap_size) throw std::bad_alloc();
-
-	// char* pc = &(_heap_space[next_ptr_offset]);
-        // void* p = (void*) pc;
-        // next_ptr_offset += size;
-
-        // return p;
-
         gc::heap::free_cell* next_free_cell = gc::heap::_free;
         gc::heap::free_cell* current_largest_cell = gc::heap::_free;
 

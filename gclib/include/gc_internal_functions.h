@@ -3,8 +3,6 @@
 
 namespace gc
 {
-    template<class T> class static_ptr;
-
     void add_static(void* sptr);
     void remove_static(void* sptr);
 

@@ -7,7 +7,6 @@
 #include "gc_cell.h"
 #include "gc_free_cell.h"
 
-
 void gc::add_static(void* sptr)
 {
     gc::static_ptr<bool>* sptr_typed = (gc::static_ptr<bool>*) sptr;
