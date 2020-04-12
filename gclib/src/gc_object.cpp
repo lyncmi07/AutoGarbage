@@ -36,8 +36,10 @@ bool* gc::object::gc_fields_end() { return nullptr; }
 
 
 gc::object::object():
+    cell(gc::heap::_scan, _size),
     _mark('W')
 {
+    gc::heap::_scan = this;
 }
 
 void* gc::object::operator new(size_t size)

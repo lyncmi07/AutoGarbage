@@ -5,8 +5,11 @@
 namespace gc
 {
     class object;
+    namespace heap
+    {
+        class free_cell;
+    }
 
-    size_t _heap_size = 0;
     char* _heap_space = nullptr;
     size_t next_ptr_offset = 0;;
 
@@ -22,6 +25,6 @@ namespace gc
         gc::object* _bottom = nullptr;
         gc::object* _top = nullptr;
         gc::object* _scan = nullptr;
-        gc::object* _free = nullptr;
+        gc::heap::free_cell* _free = nullptr;
     }
 }

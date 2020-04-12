@@ -8,10 +8,12 @@
 namespace gc
 {
     class object;
+    namespace heap
+    {
+        class free_cell;
+    }
 
-    extern size_t _heap_size;
     extern char* _heap_space;
-    extern size_t next_ptr_offset;
 
     extern std::unordered_set<gc::object*> _white_objects;
     extern std::unordered_set<gc::object*> _black_objects;
@@ -25,7 +27,7 @@ namespace gc
         extern gc::object* _bottom;
         extern gc::object* _top;
         extern gc::object* _scan;
-        extern gc::object* _free;
+        extern gc::heap::free_cell* _free;
     }
 }
 
