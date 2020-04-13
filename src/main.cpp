@@ -49,8 +49,14 @@ int main()
     {
         gc::static_ptr<B> b(new B());
         gc::heap::heap_struct::get()->print_gc_debug();
+
+        b->debug_gc();
+        b->a().debug_object()->debug_gc();
+        b->a()->debug_gc();
+        b->debug_gc();
     }
     gc::heap::heap_struct::get()->print_gc_debug();
+
 
     return 0;
 }

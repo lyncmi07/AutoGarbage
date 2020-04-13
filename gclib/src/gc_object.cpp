@@ -4,17 +4,20 @@
 void gc::object::gc_white()
 {
     _mark = 'W';
+    gc::heap::heap_struct::get()->link_scan(this);
 }
 
 void gc::object::gc_grey()
 {
     _mark = 'G';
+    gc::heap::heap_struct::get()->link_top(this);
     _current_grey_objects++;
 }
 
 void gc::object::gc_black()
 {
     _mark = 'B';
+    gc::heap::heap_struct::get()->link_bottom(this);
     _current_grey_objects--;
     gc_grey_fields();
 }
@@ -35,7 +38,7 @@ bool* gc::object::gc_fields_end() { return nullptr; }
 
 
 gc::object::object():
-    cell(gc::heap::heap_struct::get()->scan(), _size),
+    cell(nullptr, gc::heap::heap_struct::get()->scan(), _size),
     _mark('W'),
     _iteration(gc::heap::heap_struct::get()->odd_iteration())
 {
@@ -60,14 +63,18 @@ void gc::object::gc_mark()
     switch (_mark) //seg fault
     {
         case 'B':
-            return;
+            if (_iteration == gc::heap::heap_struct::get()->odd_iteration()) return;
+            break;
         case 'G':
             gc_black();
-            break;
+            return;
         case 'W':
             gc_grey();
-	    break;
+	    return;
     }
+
+    //Move to next iteration:
+    gc_grey();
 }
 
 void gc::object::debug_fields()

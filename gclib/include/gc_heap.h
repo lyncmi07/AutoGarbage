@@ -29,7 +29,7 @@ namespace heap
 
             gc::heap::free_cell* _free;
 
-            gc::static_ptr<bool>* _static_objects_start_ptr;
+            gc::static_ptr<gc::object>* _static_objects_start_ptr;
 
             bool _odd_iteration;
 
@@ -74,7 +74,7 @@ namespace heap
                 return _free;
             }
 
-            inline gc::static_ptr<bool>* static_objects_start_ptr()
+            inline gc::static_ptr<gc::object>* static_objects_start_ptr()
             {
                 return _static_objects_start_ptr;
             }
@@ -86,6 +86,13 @@ namespace heap
 
             void add_static(void* sptr);
             void remove_static(void* sptr);
+
+            void link_bottom(gc::object* obj);
+            void link_top(gc::object* obj);
+            void link_scan(gc::object* obj);
+            void link_free(gc::heap::free_cell* obj);
+
+            void replace_free_start(gc::heap::free_cell* replacement);
 
             void print_gc_debug();
     };

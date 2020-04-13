@@ -20,7 +20,7 @@ gc::heap::heap_struct::heap_struct(size_t heap_size):
     _odd_iteration(true)
 {
     gc::heap::free_cell* initial_free_cell = (gc::heap::free_cell*) _heap_space;
-    (*initial_free_cell) = gc::heap::free_cell(nullptr, heap_size);
+    (*initial_free_cell) = gc::heap::free_cell(nullptr, nullptr, heap_size);
 
     _free = initial_free_cell;
 }
@@ -37,17 +37,21 @@ void* gc::heap::heap_struct::malloc(size_t size)
             gc::heap::free_cell* resized_cell = next_free_cell->resize(size);
             if (next_free_cell == current_largest_cell || resized_cell->size() >= current_largest_cell->size())
             {
-                _free = resized_cell;
+                //TODO: This is wrong. Whatever pointed to the original cell will still be pointing to it. It needs to move on to the next cell.
+                // _free = resized_cell;
+                replace_free_start(resized_cell);
             }
             else
             {
-                _free = current_largest_cell;
+                // _free = current_largest_cell;
+                replace_free_start(current_largest_cell);
             }
 
             return next_free_cell;
         }
         else if (next_free_cell ->size() == size)
         {
+            //TODO: unlink next_free_cell, safely move current_largest_cell to front
             _free = current_largest_cell;
             return next_free_cell;
         }
@@ -64,7 +68,7 @@ void* gc::heap::heap_struct::malloc(size_t size)
 
 void gc::heap::heap_struct::add_static(void* sptr)
 {
-    gc::static_ptr<bool>* sptr_typed = (gc::static_ptr<bool>*) sptr;
+    gc::static_ptr<gc::object>* sptr_typed = (gc::static_ptr<gc::object>*) sptr;
     sptr_typed->_back_static_object = nullptr;
     sptr_typed->_fwd_static_object = _static_objects_start_ptr;
 
@@ -74,14 +78,16 @@ void gc::heap::heap_struct::add_static(void* sptr)
     }
 
     _static_objects_start_ptr = sptr_typed;
+
+    sptr_typed->gc_mark();
 }
 
 void gc::heap::heap_struct::remove_static(void* sptr)
 {
-    gc::static_ptr<bool>* sptr_typed = (gc::static_ptr<bool>*) sptr;
+    gc::static_ptr<gc::object>* sptr_typed = (gc::static_ptr<gc::object>*) sptr;
 
-    gc::static_ptr<bool>* back_ptr = sptr_typed->_back_static_object;
-    gc::static_ptr<bool>* fwd_ptr = sptr_typed->_fwd_static_object;
+    gc::static_ptr<gc::object>* back_ptr = sptr_typed->_back_static_object;
+    gc::static_ptr<gc::object>* fwd_ptr = sptr_typed->_fwd_static_object;
 
     if (back_ptr == nullptr)
     {
@@ -115,7 +121,7 @@ void gc::heap::heap_struct::print_static_objects_list()
 {
     std::cout << "static_objects list: { start_ptr -> ";
 
-    gc::static_ptr<bool>* current_ptr = gc::heap::heap_struct::get()->static_objects_start_ptr();
+    gc::static_ptr<gc::object>* current_ptr = gc::heap::heap_struct::get()->static_objects_start_ptr();
 
     while (current_ptr != nullptr)
     {
@@ -153,4 +159,46 @@ void gc::heap::heap_struct::print_heap_pointers()
     }
 
     std::cout << "bottom }" << std::endl;
+}
+
+void gc::heap::heap_struct::link_bottom(gc::object* obj)
+{
+    obj->unlink();
+    obj->fwd_link(_bottom);
+    if (_bottom != nullptr) _bottom->back_link(obj);
+    _bottom = obj;
+    if (_bottom_initial == nullptr) _bottom_initial = _bottom;
+}
+
+void gc::heap::heap_struct::link_top(gc::object* obj)
+{
+    obj->unlink();
+    obj->fwd_link(_top);
+    if (_top != nullptr) _top->back_link(obj);
+    _top = obj;
+}
+
+void gc::heap::heap_struct::link_scan(gc::object* obj)
+{
+    obj->unlink();
+    obj->fwd_link(_scan);
+    if (_scan != nullptr) _scan->back_link(obj);
+    _scan = obj;
+    if(_scan_initial == nullptr) _scan_initial = _scan;
+}
+
+void gc::heap::heap_struct::link_free(gc::heap::free_cell* obj)
+{
+    obj->unlink();
+    obj->fwd_link(_free);
+    if (_free != nullptr) _free->back_link(obj);
+    _free = obj;
+}
+
+void gc::heap::heap_struct::replace_free_start(gc::heap::free_cell* obj)
+{
+    obj->unlink();
+    obj->fwd_link(_free->fwd_cell());
+    if (obj->fwd_cell() != nullptr) obj->fwd_cell()->back_link(obj);
+    _free = obj;
 }

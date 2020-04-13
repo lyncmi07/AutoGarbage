@@ -10,13 +10,18 @@ namespace gc
     {
         private:
         public:
-            free_cell(gc::heap::free_cell* fwd_cell, size_t size);
+            free_cell(gc::heap::free_cell* back_cell, gc::heap::free_cell* fwd_cell, size_t size);
 
             gc::heap::free_cell* resize(size_t size_decrease);
 
             inline gc::heap::free_cell* fwd_free_cell()
             {
                 return (gc::heap::free_cell*) fwd_cell();
+            }
+            
+            inline gc::heap::free_cell* back_free_cell()
+            {
+                return (gc::heap::free_cell*) back_cell();
             }
     };
 }}

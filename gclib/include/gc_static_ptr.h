@@ -17,8 +17,8 @@ namespace gc
 
             T* _object;
         public:
-            static_ptr<bool>* _back_static_object;
-            static_ptr<bool>* _fwd_static_object;
+            static_ptr<gc::object>* _back_static_object;
+            static_ptr<gc::object>* _fwd_static_object;
 
             static_ptr(T* object):
                 _object(object)
@@ -34,6 +34,7 @@ namespace gc
 
             T* operator->()
             {
+                _object->gc_mark();
                 return _object;
             }
 

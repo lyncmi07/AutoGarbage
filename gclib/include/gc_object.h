@@ -35,6 +35,16 @@ namespace gc
 
 	    void debug_fields();
 	    void debug_gc();
+
+            inline gc::object* fwd_object()
+            {
+                return (gc::object*) fwd_object();
+            }
+
+            inline gc::object* back_object()
+            {
+                return (gc::object*) back_object();
+            }
     };
 
 }
