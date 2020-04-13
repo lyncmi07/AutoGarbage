@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "gc.h"
+#include "gc_heap.h"
 
 class A : public gc::object
 {
@@ -41,7 +42,8 @@ class B : public gc::object
 
 int main()
 {
-    gc::init_gc(4096); // 4K
+    // gc::init_gc(4096); // 4K
+    gc::heap::heap_struct::init_gc(4096);
     std::cout << "Hello World!" << std::endl;
     
     {

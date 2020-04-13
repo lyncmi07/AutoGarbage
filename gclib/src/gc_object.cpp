@@ -1,4 +1,5 @@
 #include "gc_object.h"
+#include "gc_heap.h"
 
 void gc::object::gc_white()
 {
@@ -36,11 +37,11 @@ bool* gc::object::gc_fields_end() { return nullptr; }
 
 
 gc::object::object():
-    cell(gc::heap::_scan, _size),
+    cell(gc::heap::heap_struct::get()->scan(), _size),
     _mark('W'),
     _iteration(gc::heap::_odd_iteration)
 {
-    gc::heap::_scan = this;
+    gc::heap::heap_struct::get()->set_scan(this);
 }
 
 void* gc::object::operator new(size_t size)

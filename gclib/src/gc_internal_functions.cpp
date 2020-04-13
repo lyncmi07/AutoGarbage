@@ -6,6 +6,7 @@
 #include "gc_object.h"
 #include "gc_cell.h"
 #include "gc_free_cell.h"
+#include "gc_heap.h"
 
 void gc::add_static(void* sptr)
 {
@@ -83,7 +84,12 @@ void print_heap_pointers()
     std::cout << "heap pointers: { " << std::endl;
 
     std::string ptr_names[] = { "bottom", "top", "scan", "free" };
-    gc::heap::cell* heap_ptrs[] = { gc::heap::_bottom, gc::heap::_top, gc::heap::_scan, gc::heap::_free };
+
+    gc::heap::heap_struct* heap_instance = gc::heap::heap_struct::get();
+    gc::heap::cell* heap_ptrs[] = {
+        heap_instance->bottom(),
+        heap_instance->top(),
+        heap_instance->scan(), heap_instance->free() };
 
     for (unsigned int ptr_index = 0; ptr_index < 4; ptr_index++)
     {

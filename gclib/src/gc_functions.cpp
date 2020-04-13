@@ -3,16 +3,16 @@
 
 namespace gc
 {
-    void init_gc(size_t heap_size)
+    /*void init_gc(size_t heap_size)
     {
         gc::_heap_space = new char[heap_size];
 
         gc::heap::free_cell* initial_free_cell = (gc::heap::free_cell*) _heap_space;
         (*initial_free_cell) = gc::heap::free_cell(nullptr, heap_size);
         gc::heap::_free = initial_free_cell;
-    }
+    }*/
 
-    void* malloc(size_t size)
+    /*void* malloc(size_t size)
     {
         gc::heap::free_cell* next_free_cell = gc::heap::_free;
         gc::heap::free_cell* current_largest_cell = gc::heap::_free;
@@ -47,5 +47,5 @@ namespace gc
         }
 
         throw std::bad_alloc(); //TODO: Could improve by performing gc and trying to allocate again
-    }
+    }*/
 }

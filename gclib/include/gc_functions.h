@@ -3,7 +3,7 @@
 
 namespace gc
 {
-    void init_gc(size_t heap_size);
+    // void init_gc(size_t heap_size);
     void* malloc(size_t size);
 }
 
