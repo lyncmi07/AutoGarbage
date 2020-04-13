@@ -26,5 +26,7 @@ namespace gc
         gc::object* _top = nullptr;
         gc::object* _scan = nullptr;
         gc::heap::free_cell* _free = nullptr;
+
+        bool _odd_iteration = true;
     }
 }

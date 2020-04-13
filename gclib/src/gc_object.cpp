@@ -37,7 +37,8 @@ bool* gc::object::gc_fields_end() { return nullptr; }
 
 gc::object::object():
     cell(gc::heap::_scan, _size),
-    _mark('W')
+    _mark('W'),
+    _iteration(gc::heap::_odd_iteration)
 {
     gc::heap::_scan = this;
 }

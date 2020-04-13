@@ -28,6 +28,8 @@ namespace gc
         extern gc::object* _top;
         extern gc::object* _scan;
         extern gc::heap::free_cell* _free;
+
+        extern bool _odd_iteration;
     }
 }
 

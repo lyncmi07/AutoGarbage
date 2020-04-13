@@ -6,6 +6,8 @@ namespace gc
     void add_static(void* sptr);
     void remove_static(void* sptr);
 
+    void flip();
+
     void print_gc_debug();
 }
 

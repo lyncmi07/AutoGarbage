@@ -43,6 +43,11 @@ void gc::remove_static(void* sptr)
     }
 }
 
+void gc::flip()
+{
+
+}
+
 void print_static_objects_list();
 void print_heap_pointers();
 void gc::print_gc_debug()
