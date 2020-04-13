@@ -9,7 +9,6 @@ void gc::object::gc_white()
 void gc::object::gc_grey()
 {
     _mark = 'G';
-    gc::_white_objects.erase(this);
     _current_grey_objects++;
 }
 
@@ -18,7 +17,6 @@ void gc::object::gc_black()
     _mark = 'B';
     _current_grey_objects--;
     gc_grey_fields();
-    gc::_black_objects.insert(this);
 }
 
 void gc::object::gc_grey_fields()
@@ -39,14 +37,14 @@ bool* gc::object::gc_fields_end() { return nullptr; }
 gc::object::object():
     cell(gc::heap::heap_struct::get()->scan(), _size),
     _mark('W'),
-    _iteration(gc::heap::_odd_iteration)
+    _iteration(gc::heap::heap_struct::get()->odd_iteration())
 {
     gc::heap::heap_struct::get()->set_scan(this);
 }
 
 void* gc::object::operator new(size_t size)
 {
-    void* p = gc::malloc(size);
+    void* p = gc::heap::heap_struct::get()->malloc(size);
     ((object*) p)->_size = size;
 
     return p;

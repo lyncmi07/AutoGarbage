@@ -5,7 +5,6 @@
 
 #include "gc_object.h"
 #include "gc_statics.h"
-#include "gc_functions.h"
 #include "gc_field.h"
 #include "gc_static_ptr.h"
 

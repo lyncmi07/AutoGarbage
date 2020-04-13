@@ -3,6 +3,8 @@
 
 namespace gc
 {
+    class object;
+
     template<class T>
     class field
     {

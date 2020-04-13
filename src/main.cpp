@@ -48,9 +48,9 @@ int main()
     
     {
         gc::static_ptr<B> b(new B());
-        gc::print_gc_debug();
+        gc::heap::heap_struct::get()->print_gc_debug();
     }
-    gc::print_gc_debug();
+    gc::heap::heap_struct::get()->print_gc_debug();
 
     return 0;
 }

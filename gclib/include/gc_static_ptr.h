@@ -1,7 +1,7 @@
 #ifndef GC_LIB_STATIC_PTR_H
 #define GC_LIB_STATIC_PTR_H
 
-#include "gc_internal_functions.h"
+#include "gc_heap.h"
 
 namespace gc
 {
@@ -24,12 +24,12 @@ namespace gc
                 _object(object)
             {
                 ensure_gc_object(object);
-                gc::add_static(this);
+                gc::heap::heap_struct::get()->add_static(this);
             }
 
             ~static_ptr()
             {
-                gc::remove_static(this);
+                gc::heap::heap_struct::get()->remove_static(this);
             }
 
             T* operator->()

@@ -4,7 +4,6 @@
 #include <iostream>
 
 #include "gc_statics.h"
-#include "gc_functions.h"
 #include "gc_field.h"
 #include "gc_cell.h"
 
