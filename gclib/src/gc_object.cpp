@@ -4,14 +4,12 @@
 void gc::object::gc_white()
 {
     _mark = 'W';
-    unlink();
     gc::heap::heap_struct::get()->link_scan(this);
 }
 
 void gc::object::gc_grey()
 {
     _mark = 'G';
-    unlink();
     gc::heap::heap_struct::get()->link_top(this);
     _current_grey_objects++;
 }
@@ -19,7 +17,6 @@ void gc::object::gc_grey()
 void gc::object::gc_black()
 {
     _mark = 'B';
-    unlink();
     gc::heap::heap_struct::get()->link_bottom(this);
     _current_grey_objects--;
     gc_grey_fields();
