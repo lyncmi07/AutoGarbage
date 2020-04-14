@@ -3,6 +3,7 @@
 #include "gc_static_ptr.h"
 #include "gc_free_cell.h"
 #include "gc_object.h"
+#include "gc_cell.h"
 #include <new>
 #include <iostream>
 
@@ -11,24 +12,26 @@ gc::heap::heap_struct* gc::heap::heap_struct::INSTANCE = nullptr;
 gc::heap::heap_struct::heap_struct(size_t heap_size):
     _heap_size(heap_size),
     _heap_space((void*) new char[_heap_size]),
-    _bottom(nullptr),
+    _bottom(new gc::heap::cell(nullptr, nullptr, 0)),
     _bottom_initial(nullptr),
-    _top(nullptr),
-    _scan(nullptr),
+    _top(new gc::heap::cell(nullptr, nullptr, 0)),
+    _scan(new gc::heap::cell(nullptr, nullptr, 0)),
     _scan_initial(nullptr),
+    _free(new gc::heap::cell(nullptr, nullptr, 0)),
     _static_objects_start_ptr(nullptr),
     _odd_iteration(true)
 {
     gc::heap::free_cell* initial_free_cell = (gc::heap::free_cell*) _heap_space;
     (*initial_free_cell) = gc::heap::free_cell(nullptr, nullptr, heap_size);
 
-    _free = initial_free_cell;
+    _free->fwd_link(initial_free_cell);
+    initial_free_cell->back_link(_free);
 }
 
 void* gc::heap::heap_struct::malloc(size_t size)
 {
-    gc::heap::free_cell* next_free_cell = _free;
-    gc::heap::free_cell* current_largest_cell = _free;
+    gc::heap::free_cell* next_free_cell = free();
+    gc::heap::free_cell* current_largest_cell = free();
 
     while(next_free_cell != nullptr)
     {
@@ -49,10 +52,11 @@ void* gc::heap::heap_struct::malloc(size_t size)
 
             return next_free_cell;
         }
-        else if (next_free_cell ->size() == size)
+        else if (next_free_cell->size() == size)
         {
             //TODO: unlink next_free_cell, safely move current_largest_cell to front
-            _free = current_largest_cell;
+            // _free = current_largest_cell;
+            replace_free_start(current_largest_cell);
             return next_free_cell;
         }
         else if(next_free_cell-> size() > current_largest_cell->size())
@@ -164,41 +168,46 @@ void gc::heap::heap_struct::print_heap_pointers()
 void gc::heap::heap_struct::link_bottom(gc::object* obj)
 {
     obj->unlink();
-    obj->fwd_link(_bottom);
-    if (_bottom != nullptr) _bottom->back_link(obj);
-    _bottom = obj;
-    if (_bottom_initial == nullptr) _bottom_initial = _bottom;
+    obj->fwd_link(_bottom->fwd_cell());
+    if (obj->fwd_cell() != nullptr) obj->fwd_cell()->back_link(obj);
+    _bottom->fwd_link(obj);
+    obj->back_link(_bottom);
+    if (_bottom_initial == nullptr) _bottom_initial = obj;
 }
 
 void gc::heap::heap_struct::link_top(gc::object* obj)
 {
     obj->unlink();
-    obj->fwd_link(_top);
-    if (_top != nullptr) _top->back_link(obj);
-    _top = obj;
+    obj->fwd_link(_top->fwd_cell());
+    if (obj->fwd_cell() != nullptr) obj->fwd_cell()->back_link(obj);
+    _top->fwd_link(obj);
+    obj->back_link(_top);
 }
 
 void gc::heap::heap_struct::link_scan(gc::object* obj)
 {
     obj->unlink();
-    obj->fwd_link(_scan);
-    if (_scan != nullptr) _scan->back_link(obj);
-    _scan = obj;
-    if(_scan_initial == nullptr) _scan_initial = _scan;
+    obj->fwd_link(_scan->fwd_cell());
+    if (obj->fwd_cell() != nullptr) obj->fwd_cell()->back_link(obj);
+    _scan->fwd_link(obj);
+    obj->back_link(_scan);
+    if (_scan_initial == nullptr) _scan_initial = obj;
 }
 
 void gc::heap::heap_struct::link_free(gc::heap::free_cell* obj)
 {
     obj->unlink();
-    obj->fwd_link(_free);
-    if (_free != nullptr) _free->back_link(obj);
-    _free = obj;
+    obj->fwd_link(_free->fwd_cell());
+    if (obj->fwd_cell() != nullptr) obj->fwd_cell()->back_link(obj);
+    _free->fwd_link(obj);
+    obj->back_link(_free);
 }
 
 void gc::heap::heap_struct::replace_free_start(gc::heap::free_cell* obj)
 {
     obj->unlink();
-    obj->fwd_link(_free->fwd_cell());
+    obj->fwd_link(free());
     if (obj->fwd_cell() != nullptr) obj->fwd_cell()->back_link(obj);
-    _free = obj;
+    _free->fwd_link(obj);
+    obj->back_link(_free);
 }

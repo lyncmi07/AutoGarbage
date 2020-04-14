@@ -3,9 +3,11 @@
 
 #include <cstdlib>
 
+#include "gc_cell.h"
+#include "gc_object.h"
+
 namespace gc
 {
-    class object;
     template<class T> class static_ptr;
 namespace heap
 {
@@ -19,15 +21,15 @@ namespace heap
             size_t _heap_size;
             void* _heap_space;
 
-            gc::object* _bottom;
+            gc::heap::cell *const _bottom;
             gc::object* _bottom_initial;
 
-            gc::object* _top;
+            gc::heap::cell *const _top;
 
-            gc::object* _scan;
+            gc::heap::cell *const _scan;
             gc::object* _scan_initial;
 
-            gc::heap::free_cell* _free;
+            gc::heap::cell *const _free;
 
             gc::static_ptr<gc::object>* _static_objects_start_ptr;
 
@@ -52,26 +54,26 @@ namespace heap
 
             inline gc::object* bottom()
             {
-                return _bottom;
+                return (gc::object*) _bottom->fwd_cell();
             }
 
             inline gc::object* top()
             {
-                return _top;
+                return (gc::object*) _top->fwd_cell();
             }
 
             inline gc::object* scan()
             {
-                return _scan;
+                return (gc::object*) _scan->fwd_cell();
             }
             inline void set_scan(gc::object* new_scan)
             {
-                _scan = new_scan;
+                _scan->fwd_link(new_scan);
             }
 
             inline gc::heap::free_cell* free()
             {
-                return _free;
+                return (gc::heap::free_cell*) _free->fwd_cell();
             }
 
             inline gc::static_ptr<gc::object>* static_objects_start_ptr()

@@ -14,7 +14,7 @@ obj/main.o: src/main.cpp gclib/include/*.h
 	$(CC) $(CCFLAGS) -o $@ -c $<
 
 gclib/include/gc.h.gch: gclib/include/*.h
-	$(CC) $(CCFLAGS) -c $<
+	$(CC) $(CCFLAGS) -c $^
 
 gclib/lib/libgc.a: gclib/obj/gc_statics.o gclib/obj/gc_object.o gclib/obj/gc_free_cell.o gclib/obj/gc_cell.o gclib/obj/gc_heap.o
 	ar ru $@ $^

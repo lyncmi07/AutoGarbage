@@ -38,11 +38,12 @@ bool* gc::object::gc_fields_end() { return nullptr; }
 
 
 gc::object::object():
-    cell(nullptr, gc::heap::heap_struct::get()->scan(), _size),
+    cell(nullptr, nullptr, _size),
     _mark('W'),
     _iteration(gc::heap::heap_struct::get()->odd_iteration())
 {
-    gc::heap::heap_struct::get()->set_scan(this);
+    // gc::heap::heap_struct::get()->set_scan(this);
+    gc::heap::heap_struct::get()->link_scan(this);
 }
 
 void* gc::object::operator new(size_t size)
