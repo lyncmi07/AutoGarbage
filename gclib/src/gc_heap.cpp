@@ -156,7 +156,7 @@ void gc::heap::heap_struct::print_heap_pointers()
 
     for (unsigned int ptr_index = 0; ptr_index < 4; ptr_index++)
     {
-        std::cout << ptr_names[ptr_index] << " -> " << std::endl;
+        std::cout << ptr_names[ptr_index] << ":" << heap_ptrs[ptr_index] << " -> " << std::endl;
         gc::heap::cell* current_ptr = heap_ptrs[ptr_index]->fwd_cell();
         gc::heap::cell* last_ptr = heap_ptrs[ptr_index+1];
 
@@ -213,4 +213,55 @@ void gc::heap::heap_struct::replace_free_start(gc::heap::free_cell* obj)
     obj->fwd_cell()->back_link(obj);
     _free->fwd_link(obj);
     obj->back_link(_free);
+}
+
+void gc::heap::heap_struct::flip()
+{
+    flip_list();
+    _odd_iteration = !_odd_iteration;
+}
+
+void gc::heap::heap_struct::flip_list()
+{
+    {
+        //white to free: _scan->f->l->_free->e => _scan->_free->f->l->e
+        auto first_scan_cell = _scan->fwd_cell(); //f
+        auto last_scan_cell = _free->back_cell(); //l
+        auto first_free_cell = _free->fwd_cell(); //e
+
+        if (first_scan_cell != _free)
+        {
+            // _scan->_free
+            _scan->fwd_link(_free);
+            _free->back_link(_scan);
+
+            // l->e
+            last_scan_cell->fwd_link(first_free_cell);
+            first_free_cell->back_link(last_scan_cell);
+    
+            // _free->f
+            _free->fwd_link(first_scan_cell);
+            first_scan_cell->back_link(_free);
+        }
+    }
+    {
+        // black to white: _bottom->f->l->_top->_scan->_free => _bottom->_top->_scan->f->l->_free
+        auto first_bottom_cell = _bottom->fwd_cell(); //f
+        auto last_bottom_cell = _top->back_cell(); //l
+
+        if (first_bottom_cell != _top)
+        {
+            // _bottom->_top
+            _bottom->fwd_link(_top);
+            _top->back_link(_bottom);
+
+            // _scan->f
+            _scan->fwd_link(first_bottom_cell);
+            first_bottom_cell->back_link(_scan);
+
+            // l->_free
+            last_bottom_cell->fwd_link(_free);
+            _free->back_link(last_bottom_cell);
+        }
+    }
 }

@@ -35,6 +35,8 @@ namespace heap
 
             heap_struct(size_t heap_size);
 
+            void flip_list(); 
+
             void print_static_objects_list();
             void print_heap_pointers();
         public:
@@ -92,7 +94,11 @@ namespace heap
             void link_scan(gc::object* obj);
             void link_free(gc::heap::free_cell* obj);
 
+
             void replace_free_start(gc::heap::free_cell* replacement);
+
+            //gc memory once grey objects at zero
+            void flip();
 
             void print_gc_debug();
     };
