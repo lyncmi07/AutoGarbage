@@ -22,12 +22,10 @@ namespace heap
             void* _heap_space;
 
             gc::heap::cell *const _bottom;
-            gc::object* _bottom_initial;
 
             gc::heap::cell *const _top;
 
             gc::heap::cell *const _scan;
-            gc::object* _scan_initial;
 
             gc::heap::cell *const _free;
 
