@@ -54,12 +54,18 @@ void* gc::heap::heap_struct::malloc(size_t size)
                 replace_free_start(current_largest_cell);
             }
 
+
+            next_free_cell->fwd_link(nullptr);
+            next_free_cell->back_link(nullptr);
             return next_free_cell;
         }
         else if (next_free_cell->size() == size)
         {
             //TODO: unlink next_free_cell, safely move current_largest_cell to front
-            replace_free_start(current_largest_cell);
+
+            next_free_cell->unlink();
+            if (next_free_cell != current_largest_cell) replace_free_start(current_largest_cell);
+
             return next_free_cell;
         }
         else if(next_free_cell-> size() > current_largest_cell->size())

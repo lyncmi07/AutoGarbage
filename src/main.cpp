@@ -58,7 +58,7 @@ int main()
     gc::heap::heap_struct::get()->print_gc_debug();
 
     int a;
-    std::cin >> a;
+    // std::cin >> a;
 
     gc::heap::heap_struct::get()->flip();
     gc::heap::heap_struct::get()->print_gc_debug();
@@ -69,8 +69,15 @@ int main()
     {
         gc::static_ptr<B> b(new B());
         gc::heap::heap_struct::get()->print_gc_debug();
+        b->a()->debug_gc();
+        gc::heap::heap_struct::get()->print_gc_debug();
     }
     gc::heap::heap_struct::get()->print_gc_debug();
 
     return 0;
+}
+
+void debug()
+{
+    gc::heap::heap_struct::get()->print_gc_debug();
 }

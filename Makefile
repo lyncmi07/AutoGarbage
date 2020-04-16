@@ -7,14 +7,14 @@ TARGET=a.out
 
 all=$(TARGET)
 
-$(TARGET): obj/main.o gclib/lib/libgc.a gclib/include/gc.h.gch
+$(TARGET): obj/main.o gclib/lib/libgc.a gclib/include/gc.h
 	$(CC) $(LDFLAGS) -o $@ $< $(LDLIBS)
 
 obj/main.o: src/main.cpp gclib/include/*.h
 	$(CC) $(CCFLAGS) -o $@ -c $<
 
-gclib/include/gc.h.gch: gclib/include/*.h
-	$(CC) $(CCFLAGS) -c $^
+# gclib/include/gc.h.gch: gclib/include/*.h
+	# $(CC) $(CCFLAGS) -c $^
 
 gclib/lib/libgc.a: gclib/obj/gc_statics.o gclib/obj/gc_object.o gclib/obj/gc_free_cell.o gclib/obj/gc_cell.o gclib/obj/gc_heap.o
 	ar ru $@ $^

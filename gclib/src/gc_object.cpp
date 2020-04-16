@@ -1,4 +1,5 @@
 #include "gc_object.h"
+#include "gc_cell.h"
 #include "gc_heap.h"
 
 void gc::object::gc_white()
@@ -42,7 +43,6 @@ gc::object::object():
     _mark('W'),
     _iteration(gc::heap::heap_struct::get()->odd_iteration())
 {
-    // gc::heap::heap_struct::get()->set_scan(this);
     gc::heap::heap_struct::get()->link_scan(this);
 }
 
