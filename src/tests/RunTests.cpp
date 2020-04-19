@@ -5,7 +5,8 @@
 int main()
 {
     std::cout << std::endl << "---RUNNING TESTS---" << std::endl;
-    RUN_TEST(AllocationCorrectnessTests);
+    RUN_TEST_SUITE(AllocationCorrectnessTests);
+    RUN_TEST_SUITE(FlipCorrectnessTests);
 }
 
 

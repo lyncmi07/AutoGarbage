@@ -13,6 +13,7 @@
 #define TEST_SUCCESS return 0
 
 #define RUN_TEST(func_name) if(func_name() == 1) { std::cout << #func_name << " failed." << std::endl; return 1; } else { std::cout << #func_name << " passed." << std::endl; }
+#define RUN_TEST_SUITE(func_name) if(func_name::run_tests() == 1) { std::cout << #func_name << " failed." << std::endl; return 1; } else { std::cout << #func_name << " passed." << std::endl; }
 
 #define ASSERT_BOTTOM(cell) { auto c = cell; if(assert_bottom(c) == 1) { std::cout << c << " is not in bottom list" << std::endl; return 1; } }
 #define ASSERT_TOP(cell) { auto c = cell; if(assert_top(c) == 1) { std::cout << c << " is not in top list" << std::endl; return 1; } }

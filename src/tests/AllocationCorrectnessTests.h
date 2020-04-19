@@ -5,6 +5,9 @@
 
 #include "gc.h"
 
+namespace AllocationCorrectnessTests
+{
+
 struct A : public gc::object
 {
     END_GC_FIELDS;
@@ -13,6 +16,7 @@ struct A : public gc::object
 struct B : public gc::object
 {
     gc::field<A> _a;
+    END_GC_FIELDS;
 
     B(): _a(new A())
     {
@@ -40,10 +44,14 @@ TEST(StandardAllocationObjectIsInScanList)
     TEST_SUCCESS;
 }
 
-TEST(AllocationCorrectnessTests)
+int run_tests()
 {
+    using namespace AllocationCorrectnessTests;
+
     RUN_TEST(StaticPtrAllocationObjectIsInTopList);
     RUN_TEST(StandardAllocationObjectIsInScanList);
+}
+
 }
 
 #endif
