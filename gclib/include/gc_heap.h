@@ -34,6 +34,7 @@ namespace heap
             bool _odd_iteration;
 
             heap_struct(size_t heap_size);
+            ~heap_struct();
 
             void flip_list(); 
 
@@ -44,6 +45,7 @@ namespace heap
 
             static void init_gc(size_t heap_size)
             {
+                if (gc::heap::heap_struct::INSTANCE != nullptr) delete gc::heap::heap_struct::INSTANCE;
                 gc::heap::heap_struct::INSTANCE = new heap_struct(heap_size);
             }
 

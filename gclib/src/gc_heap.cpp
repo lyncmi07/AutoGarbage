@@ -34,6 +34,16 @@ gc::heap::heap_struct::heap_struct(size_t heap_size):
     initial_free_cell->fwd_link(_bottom);
 }
 
+gc::heap::heap_struct::~heap_struct()
+{
+    delete _heap_space;
+    delete _bottom;
+    delete _top;
+    delete _scan;
+    delete _free;
+    delete _static_objects_start_ptr;
+}
+
 void* gc::heap::heap_struct::malloc(size_t size)
 {
     gc::heap::free_cell* next_free_cell = free();
