@@ -1,3 +1,4 @@
+.PHONY: test clean
 CC=g++
 LDFLAGS=-Wall
 LDLIBS=-Lgclib/lib -lgc
@@ -29,6 +30,16 @@ gclib/obj/gc_free_cell.o: gclib/src/gc_free_cell.cpp gclib/include/gc_free_cell.
 gclib/obj/gc_cell.o: gclib/src/gc_cell.cpp gclib/include/gc_cell.h
 	$(CC) $(CCFLAGS) -o $@ -c $<
 gclib/obj/gc_heap.o: gclib/src/gc_heap.cpp gclib/include/gc_heap.h
+	$(CC) $(CCFLAGS) -o $@ -c $<
+
+test: test_build
+	make test_build
+	./test_build
+
+test_build: obj/test.o gclib/lib/libgc.a 
+	$(CC) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+obj/test.o: src/tests/RunTests.cpp src/tests/*.h
 	$(CC) $(CCFLAGS) -o $@ -c $<
 
 

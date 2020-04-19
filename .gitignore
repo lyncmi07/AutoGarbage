@@ -1,5 +1,8 @@
 obj/
+
 a.out
+test_build
+
 *.swp
 *.a
 *.gch

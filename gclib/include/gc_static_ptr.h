@@ -38,6 +38,11 @@ namespace gc
                 return _object;
             }
 
+            T* debug_object()
+            {
+                return _object;
+            }
+
             void gc_mark()
             {
                 _object->gc_mark();

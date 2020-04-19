@@ -40,7 +40,7 @@ class B : public gc::object
 	}
 };
 
-int main()
+/*int main()
 {
     // gc::init_gc(4096); // 4K
     gc::heap::heap_struct::init_gc(4096);
@@ -75,6 +75,10 @@ int main()
     gc::heap::heap_struct::get()->print_gc_debug();
 
     return 0;
+}*/
+
+int main()
+{
 }
 
 void debug()
