@@ -9,4 +9,7 @@ int main()
     RUN_TEST_SUITE(FlipCorrectnessTests);
 }
 
-
+void debug()
+{
+    gc::heap::heap_struct::get()->print_gc_debug();
+}

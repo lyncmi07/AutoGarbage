@@ -37,6 +37,8 @@ namespace heap
             ~heap_struct();
 
             void flip_list(); 
+            void ungrey_all();
+            void grey_static_ptrs();
 
             void print_static_objects_list();
             void print_heap_pointers();
@@ -101,6 +103,9 @@ namespace heap
 
             //gc memory once grey objects at zero
             void flip();
+
+            //Ensure there are no grey objects left and flip heap
+            void collect_garbage();
 
             void print_gc_debug();
     };

@@ -39,7 +39,7 @@ TEST(FlipBottomStandardObjectBecomesScan)
 
     ASSERT_BOTTOM(b.debug_object()->_a.debug_object());
 
-    gc::heap::heap_struct::get()->flip();
+    gc::heap::heap_struct::get()->collect_garbage();
     ASSERT_SCAN(b.debug_object()->_a.debug_object());
 
 
@@ -55,7 +55,7 @@ TEST(FlipBottomStaticObjectBecomesTop)
 
     ASSERT_BOTTOM(b.debug_object());
 
-    gc::heap::heap_struct::get()->flip();
+    gc::heap::heap_struct::get()->collect_garbage();
     ASSERT_TOP(b.debug_object());
 
     TEST_SUCCESS;
@@ -70,7 +70,7 @@ TEST(FlipAccessStaticObjectBecomesBottom)
 
     ASSERT_BOTTOM(b.debug_object());
 
-    gc::heap::heap_struct::get()->flip();
+    gc::heap::heap_struct::get()->collect_garbage();
     b->_a;
 
     ASSERT_BOTTOM(b.debug_object());
@@ -87,7 +87,7 @@ TEST(FlipAccessStandardObjectBecomesBottom)
 
     ASSERT_BOTTOM(b.debug_object()->_a.debug_object());
 
-    gc::heap::heap_struct::get()->flip();
+    gc::heap::heap_struct::get()->collect_garbage();
     b->_a->val;
 
     ASSERT_BOTTOM(b.debug_object()->_a.debug_object());
@@ -102,8 +102,8 @@ int run_tests()
 
     RUN_TEST(FlipBottomStandardObjectBecomesScan);
     RUN_TEST(FlipBottomStaticObjectBecomesTop);
-    RUN_TEST(FlipAccessStaticObjectBecomesBottom)
-    RUN_TEST(FlipAccessStandardObjectBecomesBottom)
+    RUN_TEST(FlipAccessStaticObjectBecomesBottom);
+    RUN_TEST(FlipAccessStandardObjectBecomesBottom);
 
     TEST_SUCCESS;
 }

@@ -6,6 +6,7 @@
 #include "gc_cell.h"
 #include <new>
 #include <iostream>
+#include <variant>
 
 gc::heap::heap_struct* gc::heap::heap_struct::INSTANCE = nullptr;
 
@@ -235,6 +236,37 @@ void gc::heap::heap_struct::flip()
 {
     flip_list();
     _odd_iteration = !_odd_iteration;
+}
+
+void gc::heap::heap_struct::collect_garbage()
+{
+    ungrey_all();
+    flip();
+    grey_static_ptrs();
+}
+
+void gc::heap::heap_struct::grey_static_ptrs()
+{
+    gc::static_ptr<gc::object>* current_static_object = _static_objects_start_ptr;
+
+    while(current_static_object != nullptr)
+    {
+        current_static_object->gc_mark();
+        current_static_object = current_static_object->_fwd_static_object;
+    }
+
+}
+
+void gc::heap::heap_struct::ungrey_all()
+{
+    gc::heap::cell* current_cell(top());
+
+    while(current_cell != _scan)
+    {
+        gc::object* current_object = (gc::object*) current_cell;
+        current_cell = current_object->fwd_cell();
+        current_object->gc_mark();
+    }
 }
 
 void gc::heap::heap_struct::flip_list()
