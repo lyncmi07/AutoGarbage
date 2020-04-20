@@ -3,6 +3,12 @@
 #include "gc.h"
 #include "gc_heap.h"
 
+class TClass
+{
+    char a;
+    char b;
+};
+
 class A : public gc::object
 {
     private:
@@ -43,7 +49,7 @@ class B : public gc::object
 int main()
 {
     // gc::init_gc(4096); // 4K
-    gc::heap::heap_struct::init_gc(4096);
+    /*gc::heap::heap_struct::init_gc(4096);
     std::cout << "Hello World!" << std::endl;
     
     {
@@ -72,7 +78,19 @@ int main()
         b->a()->debug_gc();
         gc::heap::heap_struct::get()->print_gc_debug();
     }
-    gc::heap::heap_struct::get()->print_gc_debug();
+    gc::heap::heap_struct::get()->print_gc_debug();*/
+
+    TClass c;
+
+    gc::heap::heap_struct::init_gc(16384);
+
+    int i = 0;
+    while(true)
+    {
+        gc::static_ptr<B> b(new B());
+        gc::heap::heap_struct::get()->print_gc_debug();
+    }
+
 
     return 0;
 }

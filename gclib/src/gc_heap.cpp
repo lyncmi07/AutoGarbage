@@ -45,19 +45,18 @@ gc::heap::heap_struct::~heap_struct()
     delete _static_objects_start_ptr;
 }
 
-void* gc::heap::heap_struct::malloc(size_t size)
+void* gc::heap::heap_struct::attempt_allocate(size_t size)
 {
     gc::heap::free_cell* next_free_cell = free();
     gc::heap::free_cell* current_largest_cell = free();
 
-    while(next_free_cell != nullptr)
+    while(next_free_cell != _bottom)
     {
         if (next_free_cell->size() > size)
         {
             gc::heap::free_cell* resized_cell = next_free_cell->resize(size);
             if (next_free_cell == current_largest_cell || resized_cell->size() >= current_largest_cell->size())
             {
-                //TODO: This is wrong. Whatever pointed to the original cell will still be pointing to it. It needs to move on to the next cell.
                 replace_free_start(resized_cell);
             }
             else
@@ -87,7 +86,25 @@ void* gc::heap::heap_struct::malloc(size_t size)
         next_free_cell = next_free_cell->fwd_free_cell();
     }
 
-    throw std::bad_alloc(); //TODO: Could improve by performing gc and trying to allocate again
+    return nullptr;
+}
+
+void* gc::heap::heap_struct::malloc(size_t size)
+{
+    void* allocation = attempt_allocate(size);
+    if (allocation != nullptr) return allocation;
+
+    collect_garbage(); //free up memory
+
+    allocation = attempt_allocate(size);
+    if (allocation != nullptr) return allocation;
+
+    collect_garbage(); //last free up memory attempt in case black objects became white
+
+    allocation = attempt_allocate(size);
+    if (allocation != nullptr) return allocation;
+
+    throw std::bad_alloc();
 }
 
 void gc::heap::heap_struct::add_static(void* sptr)
@@ -259,13 +276,13 @@ void gc::heap::heap_struct::grey_static_ptrs()
 
 void gc::heap::heap_struct::ungrey_all()
 {
-    gc::heap::cell* current_cell(top());
+    gc::heap::cell* current_cell(_scan->back_cell());
 
-    while(current_cell != _scan)
+    while(current_cell != _top)
     {
         gc::object* current_object = (gc::object*) current_cell;
-        current_cell = current_object->fwd_cell();
         current_object->gc_mark();
+        current_cell = _scan->back_cell();
     }
 }
 

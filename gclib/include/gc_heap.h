@@ -42,10 +42,12 @@ namespace heap
 
             void print_static_objects_list();
             void print_heap_pointers();
+
+            void* attempt_allocate(size_t size);
         public:
             void* malloc(size_t size);
 
-            static void init_gc(size_t heap_size)
+            static void init_gc(unsigned int heap_size)
             {
                 if (gc::heap::heap_struct::INSTANCE != nullptr) delete gc::heap::heap_struct::INSTANCE;
                 gc::heap::heap_struct::INSTANCE = new heap_struct(heap_size);
