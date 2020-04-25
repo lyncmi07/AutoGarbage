@@ -3,15 +3,15 @@
 
 #include <cstdlib>
 
-#include "gc_cell.h"
-#include "gc_object.h"
-
 namespace gc
 {
     template<class T> class static_ptr;
+    class object;
+
 namespace heap
 {
     class free_cell;
+    class cell;
 
     class heap_struct
     {
@@ -31,15 +31,19 @@ namespace heap
 
             gc::static_ptr<gc::object>* _static_objects_start_ptr;
 
+            gc::object* _initialization_objects_start_ptr;
+
             bool _odd_iteration;
 
             heap_struct(size_t heap_size);
             ~heap_struct();
 
+
             void flip_list(); 
             void ungrey_all();
             void grey_static_ptrs();
 
+            void print_initialization_objects_list();
             void print_static_objects_list();
             void print_heap_pointers();
 
@@ -58,34 +62,21 @@ namespace heap
                 return INSTANCE;
             }
 
-            inline gc::object* bottom()
-            {
-                return (gc::object*) _bottom->fwd_cell();
-            }
-
-            inline gc::object* top()
-            {
-                return (gc::object*) _top->fwd_cell();
-            }
-
-            inline gc::object* scan()
-            {
-                return (gc::object*) _scan->fwd_cell();
-            }
-            inline void set_scan(gc::object* new_scan)
-            {
-                _scan->fwd_link(new_scan);
-            }
-
-            inline gc::heap::free_cell* free()
-            {
-                return (gc::heap::free_cell*) _free->fwd_cell();
-            }
-
             inline gc::static_ptr<gc::object>* static_objects_start_ptr()
             {
                 return _static_objects_start_ptr;
             }
+
+            inline gc::object* initialization_objects_start_ptr()
+            {
+                return _initialization_objects_start_ptr;
+            }
+
+            gc::object* bottom();
+            gc::object* top();
+            gc::object* scan();
+            void set_scan(gc::object* new_scan);
+            gc::heap::free_cell* free();
 
             inline bool odd_iteration()
             {
@@ -110,6 +101,9 @@ namespace heap
             void collect_garbage();
 
             void print_gc_debug();
+
+            void add_to_initialization_list(gc::object* object);
+            void remove_from_initialization_list(gc::object* object);
     };
 }}
 

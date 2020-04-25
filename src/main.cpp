@@ -82,7 +82,7 @@ int main()
 
     TClass c;
 
-    gc::heap::heap_struct::init_gc(16384);
+    gc::heap::heap_struct::init_gc(1000);
 
     int i = 0;
     while(true)

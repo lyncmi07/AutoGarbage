@@ -89,22 +89,52 @@ void* gc::heap::heap_struct::attempt_allocate(size_t size)
     return nullptr;
 }
 
+void gc::heap::heap_struct::add_to_initialization_list(gc::object* object)
+{
+    gc::object* current_start = _initialization_objects_start_ptr;
+
+    _initialization_objects_start_ptr = object;
+    object->fwd_link(nullptr);
+    object->back_link(nullptr);
+
+    if (current_start != nullptr)
+    {
+        current_start->back_link(object);
+    }
+}
+
+void gc::heap::heap_struct::remove_from_initialization_list(gc::object* object)
+{
+    gc::object* fwd_ptr = object->fwd_object();
+    object->unlink();
+    if (_initialization_objects_start_ptr == object)
+    {
+        _initialization_objects_start_ptr = fwd_ptr;
+    }
+
+    //Take object out of initialization
+    object->gc_mark();
+}
+
 void* gc::heap::heap_struct::malloc(size_t size)
 {
     void* allocation = attempt_allocate(size);
-    if (allocation != nullptr) return allocation;
+    if (allocation != nullptr) goto return_allocation;
 
     collect_garbage(); //free up memory
 
     allocation = attempt_allocate(size);
-    if (allocation != nullptr) return allocation;
+    if (allocation != nullptr) goto return_allocation;
 
     collect_garbage(); //last free up memory attempt in case black objects became white
 
     allocation = attempt_allocate(size);
-    if (allocation != nullptr) return allocation;
+    if (allocation != nullptr) goto return_allocation;
 
     throw std::bad_alloc();
+
+return_allocation:
+    add_to_initialization_list((gc::object*) allocation);
 }
 
 void gc::heap::heap_struct::add_static(void* sptr)
@@ -153,16 +183,35 @@ void gc::heap::heap_struct::print_gc_debug()
 
     std::cout << std::endl;
 
+    print_initialization_objects_list();
+
+    std::cout << std::endl;
+
     print_heap_pointers();
 
     std::cout << "--END GC DEBUG--" << std::endl;
+}
+
+void gc::heap::heap_struct::print_initialization_objects_list()
+{
+    std::cout << "initalization_objects list: { start_ptr -> ";
+
+    gc::object* current_ptr = _initialization_objects_start_ptr;
+
+    while (current_ptr != nullptr)
+    {
+        std::cout << current_ptr << " -> ";
+        current_ptr = current_ptr->fwd_object();
+    }
+
+    std::cout << "nullptr }" << std::endl;
 }
 
 void gc::heap::heap_struct::print_static_objects_list()
 {
     std::cout << "static_objects list: { start_ptr -> ";
 
-    gc::static_ptr<gc::object>* current_ptr = gc::heap::heap_struct::get()->static_objects_start_ptr();
+    gc::static_ptr<gc::object>* current_ptr = _static_objects_start_ptr;
 
     while (current_ptr != nullptr)
     {
@@ -285,6 +334,31 @@ void gc::heap::heap_struct::ungrey_all()
         current_cell = _scan->back_cell();
     }
 }
+
+gc::object* gc::heap::heap_struct::bottom()
+{
+    return (gc::object*) _bottom->fwd_cell();
+}
+
+gc::object* gc::heap::heap_struct::top()
+{
+    return (gc::object*) _top->fwd_cell();
+}
+
+gc::object* gc::heap::heap_struct::scan()
+{
+    return (gc::object*) _scan->fwd_cell();
+}
+void gc::heap::heap_struct::set_scan(gc::object* new_scan)
+{
+    _scan->fwd_link(new_scan);
+}
+
+gc::heap::free_cell* gc::heap::heap_struct::free()
+{
+    return (gc::heap::free_cell*) _free->fwd_cell();
+}
+
 
 void gc::heap::heap_struct::flip_list()
 {

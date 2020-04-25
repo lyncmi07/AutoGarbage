@@ -30,20 +30,21 @@ namespace gc
             void* operator new(size_t size);
 
             size_t size();
+            char current_mark();
 
-	    void gc_mark();
+	        void gc_mark();
 
-	    void debug_fields();
-	    void debug_gc();
+	        void debug_fields();
+	        void debug_gc();
 
             inline gc::object* fwd_object()
             {
-                return (gc::object*) fwd_object();
+                return (gc::object*) fwd_cell();
             }
 
             inline gc::object* back_object()
             {
-                return (gc::object*) back_object();
+                return (gc::object*) back_cell();
             }
     };
 

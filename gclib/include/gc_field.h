@@ -1,6 +1,8 @@
 #ifndef GC_LIB_FIELD_H
 #define GC_LIB_FIELD_H
 
+#include "gc_heap.h"
+
 namespace gc
 {
     class object;
@@ -19,6 +21,7 @@ namespace gc
                 _object(object)
             {
                 ensure_gc_object(object);
+                if (object->current_mark() == 'I') gc::heap::heap_struct::get()->remove_from_initialization_list(object);
             }
 
 	    T* operator->()
