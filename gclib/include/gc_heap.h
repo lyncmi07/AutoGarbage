@@ -10,7 +10,6 @@ namespace gc
 
 namespace heap
 {
-    class free_cell;
     class cell;
 
     class heap_struct
@@ -47,7 +46,7 @@ namespace heap
             void print_static_objects_list();
             void print_heap_pointers();
 
-            void* attempt_allocate(size_t size);
+            gc::heap::cell* attempt_allocate(size_t size);
         public:
             void* malloc(size_t size);
 
@@ -76,7 +75,7 @@ namespace heap
             gc::object* top();
             gc::object* scan();
             void set_scan(gc::object* new_scan);
-            gc::heap::free_cell* free();
+            gc::heap::cell* free();
 
             inline bool odd_iteration()
             {
@@ -89,10 +88,10 @@ namespace heap
             void link_bottom(gc::object* obj);
             void link_top(gc::object* obj);
             void link_scan(gc::object* obj);
-            void link_free(gc::heap::free_cell* obj);
+            void link_free(gc::heap::cell* obj);
 
 
-            void replace_free_start(gc::heap::free_cell* replacement);
+            void replace_free_start(gc::heap::cell* replacement);
 
             //gc memory once grey objects at zero
             void flip();

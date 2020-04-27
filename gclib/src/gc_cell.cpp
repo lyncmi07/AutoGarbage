@@ -40,3 +40,16 @@ void* gc::heap::cell::actual_position()
     if (_using_vtable_offset) actual_position -= 8;
     return actual_position;
 } 
+
+
+gc::heap::cell* gc::heap::cell::resize(size_t size_decrease)
+{
+    if (size_decrease >= size()) throw std::bad_alloc();
+
+    size_t new_size = size() - size_decrease;
+
+    gc::heap::cell* new_cell_position = (gc::heap::cell*) (((char*)this->actual_position()) + size_decrease);
+
+    (*new_cell_position) = cell(back_cell(), fwd_cell(), new_size, false);
+    return new_cell_position;
+}

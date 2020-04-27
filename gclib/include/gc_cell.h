@@ -38,6 +38,7 @@ namespace gc
             }
 
             void* actual_position();
+            gc::heap::cell* resize(size_t size_decrease);
     };
 }}
 
