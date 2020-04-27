@@ -2,15 +2,17 @@
 
 #include <exception>
 
-gc::heap::cell::cell(size_t size):
-    _size(size)
+gc::heap::cell::cell(size_t size, bool using_vtable_offset):
+    _size(size),
+    _using_vtable_offset(using_vtable_offset)
 {
 }
 
-gc::heap::cell::cell(gc::heap::cell* back_cell, gc::heap::cell* fwd_cell, size_t size):
+gc::heap::cell::cell(gc::heap::cell* back_cell, gc::heap::cell* fwd_cell, size_t size, bool using_vtable_offset):
     _back_cell(back_cell),
     _fwd_cell(fwd_cell),
-    _size(size)
+    _size(size),
+    _using_vtable_offset(using_vtable_offset)
 {
 }
 
@@ -32,7 +34,9 @@ void gc::heap::cell::back_link(gc::heap::cell* prev_cell)
     _back_cell = prev_cell;
 }
 
-void gc::heap::cell::set_actual_position(void* actual_position)
+void* gc::heap::cell::actual_position()
 {
-    _actual_position = actual_position;
-}
+    char* actual_position = (char*) this;
+    if (_using_vtable_offset) actual_position -= 8;
+    return actual_position;
+} 

@@ -13,16 +13,16 @@ gc::heap::heap_struct* gc::heap::heap_struct::INSTANCE = nullptr;
 gc::heap::heap_struct::heap_struct(size_t heap_size):
     _heap_size(heap_size),
     _heap_space((void*) new char[_heap_size]),
-    _bottom(new gc::heap::cell(nullptr, nullptr, 0)),
-    _top(new gc::heap::cell(nullptr, nullptr, 0)),
-    _scan(new gc::heap::cell(nullptr, nullptr, 0)),
-    _free(new gc::heap::cell(nullptr, nullptr, 0)),
+    _bottom(new gc::heap::cell(nullptr, nullptr, 0, false)),
+    _top(new gc::heap::cell(nullptr, nullptr, 0, false)),
+    _scan(new gc::heap::cell(nullptr, nullptr, 0, false)),
+    _free(new gc::heap::cell(nullptr, nullptr, 0, false)),
     _static_objects_start_ptr(nullptr),
     _odd_iteration(true)
 {
     gc::heap::free_cell* initial_free_cell = (gc::heap::free_cell*) _heap_space;
     (*initial_free_cell) = gc::heap::free_cell(nullptr, nullptr, heap_size);
-    initial_free_cell->set_actual_position(initial_free_cell); //now the free_cell is in the correct position, set the actual position (originally created on stack, then copied into ptr)
+    // initial_free_cell->set_actual_position(initial_free_cell); //now the free_cell is in the correct position, set the actual position (originally created on stack, then copied into ptr)
 
     // Initial list set up
     _bottom->fwd_link(_top);
