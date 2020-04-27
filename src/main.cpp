@@ -3,10 +3,44 @@
 #include "gc.h"
 #include "gc_heap.h"
 
-class TClass
+class SClass
 {
+    public:
+    char c;
+};
+class TClass : public SClass
+{
+    public:
     char a;
     char b;
+};
+
+class NClass
+{
+    public:
+    char d;
+};
+
+class UClass : public NClass
+{
+    public:
+    char _c;
+
+    virtual char c()
+    {
+        return _c;
+    }
+};
+class VClass : public UClass
+{
+    public:
+    char a;
+    char b;
+    
+    char c() override
+    {
+        return a;
+    }
 };
 
 class A : public gc::object
@@ -81,6 +115,15 @@ int main()
     gc::heap::heap_struct::get()->print_gc_debug();*/
 
     TClass c;
+    VClass v;
+
+    TClass* cp = new TClass();
+    VClass* vp = new VClass();
+
+    std::cout << sizeof(c) << std::endl;
+    std::cout << sizeof(v) << std::endl;
+    std::cout << sizeof(cp) << std::endl;
+    std::cout << sizeof(vp) << std::endl;
 
     gc::heap::heap_struct::init_gc(1000);
 

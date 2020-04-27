@@ -39,17 +39,18 @@ bool* gc::object::gc_fields_end() { return nullptr; }
 
 
 gc::object::object():
-    cell(nullptr, nullptr, _size),
+    cell(_size),
     _mark('I'),
     _iteration(gc::heap::heap_struct::get()->odd_iteration())
 {
-    // gc::heap::heap_struct::get()->link_scan(this);
 }
 
 void* gc::object::operator new(size_t size)
 {
     void* p = gc::heap::heap_struct::get()->malloc(size);
-    ((object*) p)->_size = size;
+
+    ((object*)p)->_size = size;
+    ((object*)p)->set_actual_position(p);
 
     return p;
 }

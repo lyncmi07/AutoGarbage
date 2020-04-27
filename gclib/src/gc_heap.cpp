@@ -22,6 +22,7 @@ gc::heap::heap_struct::heap_struct(size_t heap_size):
 {
     gc::heap::free_cell* initial_free_cell = (gc::heap::free_cell*) _heap_space;
     (*initial_free_cell) = gc::heap::free_cell(nullptr, nullptr, heap_size);
+    initial_free_cell->set_actual_position(initial_free_cell); //now the free_cell is in the correct position, set the actual position (originally created on stack, then copied into ptr)
 
     // Initial list set up
     _bottom->fwd_link(_top);
@@ -94,7 +95,7 @@ void gc::heap::heap_struct::add_to_initialization_list(gc::object* object)
     gc::object* current_start = _initialization_objects_start_ptr;
 
     _initialization_objects_start_ptr = object;
-    object->fwd_link(nullptr);
+    object->fwd_link(current_start);
     object->back_link(nullptr);
 
     if (current_start != nullptr)
@@ -135,6 +136,7 @@ void* gc::heap::heap_struct::malloc(size_t size)
 
 return_allocation:
     add_to_initialization_list((gc::object*) allocation);
+    return allocation;
 }
 
 void gc::heap::heap_struct::add_static(void* sptr)

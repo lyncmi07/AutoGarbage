@@ -2,6 +2,11 @@
 
 #include <exception>
 
+gc::heap::cell::cell(size_t size):
+    _size(size)
+{
+}
+
 gc::heap::cell::cell(gc::heap::cell* back_cell, gc::heap::cell* fwd_cell, size_t size):
     _back_cell(back_cell),
     _fwd_cell(fwd_cell),
@@ -25,4 +30,9 @@ void gc::heap::cell::back_link(gc::heap::cell* prev_cell)
 {
     if (prev_cell == this) throw std::exception();
     _back_cell = prev_cell;
+}
+
+void gc::heap::cell::set_actual_position(void* actual_position)
+{
+    _actual_position = actual_position;
 }
