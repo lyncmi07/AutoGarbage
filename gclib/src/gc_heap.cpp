@@ -196,6 +196,11 @@ void gc::heap::heap_struct::print_gc_debug()
     std::cout << "--END GC DEBUG--" << std::endl;
 }
 
+void gc::heap::heap_struct::print_gc_info()
+{
+    std::cout << "gc_cycle:" << _garbage_collection_cycle << " lost_cells:" << _fragment_memory_list.size() << std::endl;
+}
+
 void gc::heap::heap_struct::print_initialization_objects_list()
 {
     std::cout << "initalization_objects list: { start_ptr -> ";

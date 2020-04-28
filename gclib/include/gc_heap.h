@@ -115,6 +115,7 @@ namespace heap
             void collect_garbage();
 
             void print_gc_debug();
+            void print_gc_info();
 
             void add_to_initialization_list(gc::object* object);
             void remove_from_initialization_list(gc::object* object);
