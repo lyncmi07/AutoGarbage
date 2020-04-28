@@ -125,7 +125,7 @@ int main()
     std::cout << sizeof(cp) << std::endl;
     std::cout << sizeof(vp) << std::endl;
 
-    gc::heap::heap_struct::init_gc(1000);
+    gc::heap::heap_struct::init_gc(200000);
 
     int i = 0;
     while(true)

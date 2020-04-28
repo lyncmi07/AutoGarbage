@@ -2,6 +2,7 @@
 #define GC_LIB_HEAP_H
 
 #include <cstdlib>
+#include <vector>
 
 namespace gc
 {
@@ -10,6 +11,15 @@ namespace gc
 
 namespace heap
 {
+
+    struct fragment_memory
+    {
+        void* fragment_position;
+        size_t size;
+
+        fragment_memory(void* _fragment_position, size_t _size);
+    };
+
     class cell;
 
     class heap_struct
@@ -33,6 +43,8 @@ namespace heap
             gc::static_ptr<gc::object>* _static_objects_start_ptr;
 
             gc::object* _initialization_objects_start_ptr;
+
+            std::vector<gc::heap::fragment_memory*> _fragment_memory_list;
 
             bool _odd_iteration;
 
@@ -106,6 +118,8 @@ namespace heap
 
             void add_to_initialization_list(gc::object* object);
             void remove_from_initialization_list(gc::object* object);
+
+            void add_fragment_memory(void* position, size_t size);
     };
 }}
 

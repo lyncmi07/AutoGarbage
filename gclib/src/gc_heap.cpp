@@ -9,6 +9,10 @@
 
 gc::heap::heap_struct* gc::heap::heap_struct::INSTANCE = nullptr;
 
+gc::heap::fragment_memory::fragment_memory(void* _fragment_position, size_t _size): fragment_position(_fragment_position), size(_size)
+{
+}
+
 gc::heap::heap_struct::heap_struct(size_t heap_size):
     _heap_size(heap_size),
     _heap_space((void*) new char[_heap_size]),
@@ -56,7 +60,8 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
         {
             gc::heap::cell* resized_cell = next_free_cell->resize(size);
 
-            if (!(next_free_cell == current_largest_cell || resized_cell->size() >= current_largest_cell->size()))
+
+            if (resized_cell != nullptr && !(next_free_cell == current_largest_cell || resized_cell->size() >= current_largest_cell->size()))
             {
                 replace_free_start(current_largest_cell);
             }
@@ -403,4 +408,9 @@ void gc::heap::heap_struct::flip_list()
             _free->back_link(last_bottom_cell);
         }
     }
+}
+
+void gc::heap::heap_struct::add_fragment_memory(void* position, size_t size)
+{
+    _fragment_memory_list.push_back(new fragment_memory(position, size));
 }

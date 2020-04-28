@@ -1,4 +1,5 @@
 #include "gc_cell.h"
+#include "gc_heap.h"
 
 #include <exception>
 
@@ -47,8 +48,16 @@ gc::heap::cell* gc::heap::cell::resize(size_t size_decrease)
     if (size_decrease >= size()) throw std::bad_alloc();
 
     size_t new_size = size() - size_decrease;
-
     gc::heap::cell* new_cell_position = (gc::heap::cell*) (((char*)this->actual_position()) + size_decrease);
+
+    if (new_size < sizeof(gc::heap::cell))
+    {
+        //not large enough to support a cell, moving to fragment memory
+        gc::heap::heap_struct::get()->add_fragment_memory(new_cell_position, new_size);
+
+        unlink();
+        return nullptr;
+    }
 
     (*new_cell_position) = cell(back_cell(), fwd_cell(), new_size, false);
 
