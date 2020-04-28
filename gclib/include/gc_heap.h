@@ -20,6 +20,8 @@ namespace heap
             size_t _heap_size;
             void* _heap_space;
 
+            unsigned int _garbage_collection_cycle;
+
             gc::heap::cell *const _bottom;
 
             gc::heap::cell *const _top;
@@ -76,6 +78,7 @@ namespace heap
             gc::object* scan();
             void set_scan(gc::object* new_scan);
             gc::heap::cell* free();
+
 
             inline bool odd_iteration()
             {

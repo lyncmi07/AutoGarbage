@@ -31,6 +31,8 @@ gc::heap::heap_struct::heap_struct(size_t heap_size):
     _free->fwd_link(initial_free_cell);
     initial_free_cell->back_link(_free);
     initial_free_cell->fwd_link(_bottom);
+
+    _garbage_collection_cycle = 0;
 }
 
 gc::heap::heap_struct::~heap_struct()
@@ -53,11 +55,8 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
         if (next_free_cell->size() > size)
         {
             gc::heap::cell* resized_cell = next_free_cell->resize(size);
-            if (next_free_cell == current_largest_cell || resized_cell->size() >= current_largest_cell->size())
-            {
-                replace_free_start(resized_cell);
-            }
-            else
+
+            if (!(next_free_cell == current_largest_cell || resized_cell->size() >= current_largest_cell->size()))
             {
                 replace_free_start(current_largest_cell);
             }
@@ -177,6 +176,7 @@ void gc::heap::heap_struct::remove_static(void* sptr)
 void gc::heap::heap_struct::print_gc_debug()
 {
     std::cout << "--BEGIN GC DEBUG--" << std::endl;
+    std::cout << "GC Cycle: " << _garbage_collection_cycle << std::endl;
 
     print_static_objects_list();
 
@@ -305,6 +305,7 @@ void gc::heap::heap_struct::flip()
 
 void gc::heap::heap_struct::collect_garbage()
 {
+    _garbage_collection_cycle++;
     ungrey_all();
     flip();
     grey_static_ptrs();

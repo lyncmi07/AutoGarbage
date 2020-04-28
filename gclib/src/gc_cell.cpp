@@ -51,5 +51,9 @@ gc::heap::cell* gc::heap::cell::resize(size_t size_decrease)
     gc::heap::cell* new_cell_position = (gc::heap::cell*) (((char*)this->actual_position()) + size_decrease);
 
     (*new_cell_position) = cell(back_cell(), fwd_cell(), new_size, false);
+
+    new_cell_position->back_cell()->fwd_link(new_cell_position);
+    new_cell_position->fwd_cell()->back_link(new_cell_position);
+
     return new_cell_position;
 }
