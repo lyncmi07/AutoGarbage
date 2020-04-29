@@ -93,16 +93,16 @@ int main()
     std::cout << sizeof(cp) << std::endl;
     std::cout << sizeof(vp) << std::endl;
 
-    gc::heap::heap_struct::init_gc(200000);
-    // gc::heap::heap_struct::init_gc(1000);
+    // gc::heap::heap_struct::init_gc(2000);
+    gc::heap::heap_struct::init_gc(1000);
 
     int i = 0;
     while(true)
     {
         gc::static_ptr<B> b(new B());
-        // gc::heap::heap_struct::get()->print_gc_debug();
-        std::cout << "loop:" << i++ << " ";
-        gc::heap::heap_struct::get()->print_gc_info();
+        gc::heap::heap_struct::get()->print_gc_debug();
+        // std::cout << "loop:" << i++ << " ";
+        // gc::heap::heap_struct::get()->print_gc_info();
     }
 
 

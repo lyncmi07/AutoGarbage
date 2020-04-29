@@ -34,6 +34,15 @@ test_build: obj/test.o gclib/lib/libgc.a
 obj/test.o: src/tests/RunTests.cpp src/tests/*.h
 	$(CC) $(CCFLAGS) -o $@ -c $<
 
+performance_test: test_performance_build
+	make test_performance_build
+	./test_performance_build
+
+test_performance_build: obj/test_performance.o gclib/lib/libgc.a
+	$(CC) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+obj/test_performance.o: src/tests/performance.cpp
+	$(CC) $(CCFLAGS) -o $@ -c $<
 
 clean:
 	rm -f obj/*.o $(TARGET) gclib/include/*.gch gclib/obj/*.o gclib/lib/*.a

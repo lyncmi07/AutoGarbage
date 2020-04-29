@@ -45,6 +45,7 @@ namespace heap
             gc::object* _initialization_objects_start_ptr;
 
             std::vector<gc::heap::fragment_memory*> _fragment_memory_list;
+            unsigned int _fragment_size;
 
             bool _odd_iteration;
 

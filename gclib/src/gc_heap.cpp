@@ -181,7 +181,7 @@ void gc::heap::heap_struct::remove_static(void* sptr)
 void gc::heap::heap_struct::print_gc_debug()
 {
     std::cout << "--BEGIN GC DEBUG--" << std::endl;
-    std::cout << "GC Cycle: " << _garbage_collection_cycle << std::endl;
+    print_gc_info();
 
     print_static_objects_list();
 
@@ -198,7 +198,7 @@ void gc::heap::heap_struct::print_gc_debug()
 
 void gc::heap::heap_struct::print_gc_info()
 {
-    std::cout << "gc_cycle:" << _garbage_collection_cycle << " lost_cells:" << _fragment_memory_list.size() << std::endl;
+    std::cout << "gc_cycle:" << _garbage_collection_cycle << " lost_cells:" << _fragment_memory_list.size() << " lost_size:" << _fragment_size << std::endl;
 }
 
 void gc::heap::heap_struct::print_initialization_objects_list()
@@ -417,5 +417,6 @@ void gc::heap::heap_struct::flip_list()
 
 void gc::heap::heap_struct::add_fragment_memory(void* position, size_t size)
 {
+    _fragment_size += size;
     _fragment_memory_list.push_back(new fragment_memory(position, size));
 }

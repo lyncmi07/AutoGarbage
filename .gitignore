@@ -2,6 +2,7 @@ obj/
 
 a.out
 test_build
+test_performance_build
 
 *.swp
 *.a
