@@ -46,7 +46,8 @@ public:
 int main()
 {
     //initialise random
-    srand(time(NULL));
+    // srand(time(NULL));
+    srand(23102);
 
     std::cout << "Running performance test" << std::endl;
 

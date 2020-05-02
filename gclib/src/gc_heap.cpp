@@ -61,10 +61,10 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
             gc::heap::cell* resized_cell = next_free_cell->resize(size);
 
 
-            if (resized_cell != nullptr && !(next_free_cell == current_largest_cell || resized_cell->size() >= current_largest_cell->size()))
+            /*if (resized_cell != nullptr && !(next_free_cell == current_largest_cell || resized_cell->size() >= current_largest_cell->size()))
             {
                 replace_free_start(current_largest_cell);
-            }
+            }*/
 
 
             next_free_cell->fwd_link(nullptr);
@@ -73,10 +73,8 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
         }
         else if (next_free_cell->size() == size)
         {
-            //TODO: unlink next_free_cell, safely move current_largest_cell to front
-
             next_free_cell->unlink();
-            if (next_free_cell != current_largest_cell) replace_free_start(current_largest_cell);
+            // if (next_free_cell != current_largest_cell) replace_free_start(current_largest_cell);
 
             return next_free_cell;
         }
@@ -84,8 +82,25 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
         {
             current_largest_cell = next_free_cell;
         }
+        else
+        {
+            //Cell is not large enough. Can it be merged with the next cell?
 
-        next_free_cell = next_free_cell->fwd_cell();
+            if (next_free_cell->mergable_with_back_cell())
+            {
+                //Merge cells and try again
+                next_free_cell->merge_with_back_cell();
+
+            }
+            else
+            {
+                //Unable to merge cells, try next cell
+                next_free_cell = next_free_cell->fwd_cell();
+            }
+
+        }
+
+
     }
 
     return nullptr;

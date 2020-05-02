@@ -39,6 +39,12 @@ namespace gc
 
             void* actual_position();
             gc::heap::cell* resize(size_t size_decrease);
+
+            bool mergable_with_back_cell();
+            bool mergable_with_fwd_cell();
+
+            //Makes the assumption that the back cell has an address which is larger than this
+            void merge_with_back_cell();
     };
 }}
 
