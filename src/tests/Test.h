@@ -27,6 +27,7 @@ int assert_in_list(gc::heap::cell* first_list_cell, gc::heap::cell* list_end_cel
     while (current_cell != list_end_cell)
     {
         if (current_cell == cell) return 0;
+        current_cell = current_cell->fwd_cell();
     }
 
     return 1;

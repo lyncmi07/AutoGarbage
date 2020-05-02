@@ -265,29 +265,29 @@ void gc::heap::heap_struct::print_heap_pointers()
 void gc::heap::heap_struct::make_black(gc::object* obj)
 {
     obj->unlink();
-    obj->fwd_link(_bottom->fwd_cell());
-    _bottom->fwd_link(obj);
+    obj->back_link(_top->back_cell());
+    obj->fwd_link(_top);
 }
 
 void gc::heap::heap_struct::make_grey(gc::object* obj)
 {
     obj->unlink();
-    obj->fwd_link(_top->fwd_cell());
-    _top->fwd_link(obj);
+    obj->back_link(_scan->back_cell());
+    obj->fwd_link(_scan);
 }
 
 void gc::heap::heap_struct::make_ecru(gc::object* obj)
 {
     obj->unlink();
-    obj->fwd_link(_scan->fwd_cell());
-    _scan->fwd_link(obj);
+    obj->back_link(_free->back_cell());
+    obj->fwd_link(_free);
 }
 
 void gc::heap::heap_struct::make_white(gc::heap::cell* obj)
 {
     obj->unlink();
-    obj->fwd_link(_free->fwd_cell());
-    _free->fwd_link(obj);
+    obj->back_link(_bottom->back_cell());
+    obj->fwd_link(_bottom);
 }
 
 void gc::heap::heap_struct::replace_free_start(gc::heap::cell* obj)
