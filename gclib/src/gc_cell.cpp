@@ -27,12 +27,14 @@ void gc::heap::cell::fwd_link(gc::heap::cell* next_cell)
 {
     if (next_cell == this) throw std::exception();
     _fwd_cell = next_cell;
+    if (_fwd_cell != nullptr) _fwd_cell->_back_cell = this;
 }
 
 void gc::heap::cell::back_link(gc::heap::cell* prev_cell)
 {
     if (prev_cell == this) throw std::exception();
     _back_cell = prev_cell;
+    if (_back_cell != nullptr) _back_cell->_fwd_cell = this;
 }
 
 void* gc::heap::cell::actual_position()

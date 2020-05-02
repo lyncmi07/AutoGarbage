@@ -27,13 +27,9 @@ gc::heap::heap_struct::heap_struct(size_t heap_size):
     (*initial_free_cell) = gc::heap::cell(nullptr, nullptr, heap_size, false);
 
     _bottom->fwd_link(_top);
-    _top->back_link(_bottom);
     _top->fwd_link(_scan);
-    _scan->back_link(_top);
     _scan->fwd_link(_free);
-    _free->back_link(_scan);
     _free->fwd_link(initial_free_cell);
-    initial_free_cell->back_link(_free);
     initial_free_cell->fwd_link(_bottom);
 
     _garbage_collection_cycle = 0;
@@ -98,11 +94,6 @@ void gc::heap::heap_struct::add_to_initialization_list(gc::object* object)
     _initialization_objects_start_ptr = object;
     object->fwd_link(current_start);
     object->back_link(nullptr);
-
-    if (current_start != nullptr)
-    {
-        current_start->back_link(object);
-    }
 }
 
 void gc::heap::heap_struct::remove_from_initialization_list(gc::object* object)
@@ -275,45 +266,35 @@ void gc::heap::heap_struct::link_bottom(gc::object* obj)
 {
     obj->unlink();
     obj->fwd_link(_bottom->fwd_cell());
-    obj->fwd_cell()->back_link(obj);
     _bottom->fwd_link(obj);
-    obj->back_link(_bottom);
 }
 
 void gc::heap::heap_struct::link_top(gc::object* obj)
 {
     obj->unlink();
     obj->fwd_link(_top->fwd_cell());
-    obj->fwd_cell()->back_link(obj);
     _top->fwd_link(obj);
-    obj->back_link(_top);
 }
 
 void gc::heap::heap_struct::link_scan(gc::object* obj)
 {
     obj->unlink();
     obj->fwd_link(_scan->fwd_cell());
-    obj->fwd_cell()->back_link(obj);
     _scan->fwd_link(obj);
-    obj->back_link(_scan);
 }
 
 void gc::heap::heap_struct::link_free(gc::heap::cell* obj)
 {
     obj->unlink();
     obj->fwd_link(_free->fwd_cell());
-    obj->fwd_cell()->back_link(obj);
     _free->fwd_link(obj);
-    obj->back_link(_free);
 }
 
 void gc::heap::heap_struct::replace_free_start(gc::heap::cell* obj)
 {
     obj->unlink();
     obj->fwd_link(_free->fwd_cell());
-    obj->fwd_cell()->back_link(obj);
     _free->fwd_link(obj);
-    obj->back_link(_free);
 }
 
 void gc::heap::heap_struct::flip()
@@ -368,10 +349,6 @@ gc::object* gc::heap::heap_struct::scan()
 {
     return (gc::object*) _scan->fwd_cell();
 }
-void gc::heap::heap_struct::set_scan(gc::object* new_scan)
-{
-    _scan->fwd_link(new_scan);
-}
 
 gc::heap::cell* gc::heap::heap_struct::free()
 {
@@ -391,15 +368,12 @@ void gc::heap::heap_struct::flip_list()
         {
             // _scan->_free
             _scan->fwd_link(_free);
-            _free->back_link(_scan);
 
             // l->e
             last_scan_cell->fwd_link(first_free_cell);
-            first_free_cell->back_link(last_scan_cell);
     
             // _free->f
             _free->fwd_link(first_scan_cell);
-            first_scan_cell->back_link(_free);
         }
     }
     {
@@ -411,15 +385,12 @@ void gc::heap::heap_struct::flip_list()
         {
             // _bottom->_top
             _bottom->fwd_link(_top);
-            _top->back_link(_bottom);
 
             // _scan->f
             _scan->fwd_link(first_bottom_cell);
-            first_bottom_cell->back_link(_scan);
 
             // l->_free
             last_bottom_cell->fwd_link(_free);
-            _free->back_link(last_bottom_cell);
         }
     }
 }
