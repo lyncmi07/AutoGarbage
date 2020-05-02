@@ -3,9 +3,9 @@
 
 #include <iostream>
 
-#include "gc_free_cell.h"
 #include "gc_cell.h"
 #include "gc_heap.h"
+#include "gc_object.h"
 
 #define TEST(func_name) int func_name()
 

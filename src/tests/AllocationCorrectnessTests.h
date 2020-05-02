@@ -11,6 +11,12 @@ namespace AllocationCorrectnessTests
 struct A : public gc::object
 {
     END_GC_FIELDS;
+    int a;
+
+    A():
+        a(1)
+    {
+    }
 };
 
 struct B : public gc::object

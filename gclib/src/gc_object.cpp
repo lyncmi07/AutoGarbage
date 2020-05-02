@@ -69,20 +69,28 @@ void gc::object::gc_mark()
     switch (_mark) //seg fault
     {
         case 'B':
-            if (_iteration == gc::heap::heap_struct::get()->odd_iteration()) return;
-            break;
+            if (_iteration == gc::heap::heap_struct::get()->odd_iteration())
+            {
+                return;
+            }
+            else
+            {
+                //Move to next iteration:
+                gc_grey();
+                _iteration = gc::heap::heap_struct::get()->odd_iteration();
+                return;
+            }
         case 'G':
             gc_black();
             return;
         case 'W':
             gc_grey();
+            return;
         case 'I':
             gc_white();
-	    return;
+	        return;
     }
 
-    //Move to next iteration:
-    gc_grey();
 }
 
 void gc::object::debug_fields()
