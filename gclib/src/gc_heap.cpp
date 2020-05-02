@@ -250,7 +250,7 @@ void gc::heap::heap_struct::print_heap_pointers()
             //Check contiguous with next cell
             void* contiguous_position = (void*)((char*)current_ptr->actual_position()) + current_ptr->size();
             std::cout <<
-                ((contiguous_position == (void*)((char*)current_ptr->back_cell()->actual_position()))
+                ((contiguous_position == (void*)((char*)current_ptr->fwd_cell()->actual_position()))
                     ? "C)] ->"
                     : " )] ->")
                 << std::endl;
@@ -265,8 +265,8 @@ void gc::heap::heap_struct::print_heap_pointers()
 void gc::heap::heap_struct::make_black(gc::object* obj)
 {
     obj->unlink();
-    obj->back_link(_top->back_cell());
-    obj->fwd_link(_top);
+    obj->fwd_link(_bottom->fwd_cell());
+    obj->back_link(_bottom);
 }
 
 void gc::heap::heap_struct::make_grey(gc::object* obj)
