@@ -17,7 +17,7 @@ namespace gc
             size_t _size;
             bool _iteration;
 
-            void gc_white();
+            void gc_ecru();
             void gc_grey();
             void gc_black();
             void gc_grey_fields();

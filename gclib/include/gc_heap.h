@@ -101,10 +101,10 @@ namespace heap
             void add_static(void* sptr);
             void remove_static(void* sptr);
 
-            void link_bottom(gc::object* obj);
-            void link_top(gc::object* obj);
-            void link_scan(gc::object* obj);
-            void link_free(gc::heap::cell* obj);
+            void make_black(gc::object* obj);
+            void make_grey(gc::object* obj);
+            void make_ecru(gc::object* obj);
+            void make_white(gc::heap::cell* obj);
 
 
             void replace_free_start(gc::heap::cell* replacement);

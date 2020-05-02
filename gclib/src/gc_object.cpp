@@ -2,23 +2,23 @@
 #include "gc_cell.h"
 #include "gc_heap.h"
 
-void gc::object::gc_white()
+void gc::object::gc_ecru()
 {
     _mark = 'W';
-    gc::heap::heap_struct::get()->link_scan(this);
+    gc::heap::heap_struct::get()->make_ecru(this);
 }
 
 void gc::object::gc_grey()
 {
     _mark = 'G';
-    gc::heap::heap_struct::get()->link_top(this);
+    gc::heap::heap_struct::get()->make_grey(this);
     _current_grey_objects++;
 }
 
 void gc::object::gc_black()
 {
     _mark = 'B';
-    gc::heap::heap_struct::get()->link_bottom(this);
+    gc::heap::heap_struct::get()->make_black(this);
     _current_grey_objects--;
     gc_grey_fields();
 }
@@ -87,7 +87,7 @@ void gc::object::gc_mark()
             gc_grey();
             return;
         case 'I':
-            gc_white();
+            gc_ecru();
 	        return;
     }
 

@@ -262,28 +262,28 @@ void gc::heap::heap_struct::print_heap_pointers()
     std::cout << "bottom }" << std::endl;
 }
 
-void gc::heap::heap_struct::link_bottom(gc::object* obj)
+void gc::heap::heap_struct::make_black(gc::object* obj)
 {
     obj->unlink();
     obj->fwd_link(_bottom->fwd_cell());
     _bottom->fwd_link(obj);
 }
 
-void gc::heap::heap_struct::link_top(gc::object* obj)
+void gc::heap::heap_struct::make_grey(gc::object* obj)
 {
     obj->unlink();
     obj->fwd_link(_top->fwd_cell());
     _top->fwd_link(obj);
 }
 
-void gc::heap::heap_struct::link_scan(gc::object* obj)
+void gc::heap::heap_struct::make_ecru(gc::object* obj)
 {
     obj->unlink();
     obj->fwd_link(_scan->fwd_cell());
     _scan->fwd_link(obj);
 }
 
-void gc::heap::heap_struct::link_free(gc::heap::cell* obj)
+void gc::heap::heap_struct::make_white(gc::heap::cell* obj)
 {
     obj->unlink();
     obj->fwd_link(_free->fwd_cell());
