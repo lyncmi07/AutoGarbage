@@ -68,3 +68,23 @@ gc::heap::cell* gc::heap::cell::resize(size_t size_decrease)
 
     return new_cell_position;
 }
+
+bool gc::heap::cell::mergable_with_back_cell()
+{
+    void* contiguous_position = (void*)((char*)actual_position()) + size();
+
+    return contiguous_position == (void*)((char*)back_cell()->actual_position());
+}
+
+bool gc::heap::cell::mergable_with_fwd_cell()
+{
+    return fwd_cell()->mergable_with_back_cell();
+}
+
+void gc::heap::cell::merge_with_back_cell()
+{
+    size_t back_cell_size = back_cell()->size();
+    _back_cell = back_cell()->back_cell();
+    _back_cell->_fwd_cell = this;
+    _size += back_cell_size;
+}
