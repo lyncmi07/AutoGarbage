@@ -254,7 +254,16 @@ void gc::heap::heap_struct::print_heap_pointers()
 
         while (current_ptr != last_ptr)
         {
-            std::cout << "[" << current_ptr << "(" << current_ptr->actual_position() << "):" << current_ptr->size() << "] -> " << std::endl;
+            std::cout << "[" << current_ptr << "(" << current_ptr->actual_position() << "):" << current_ptr->size() << "(";
+
+            //Check contiguous with next cell
+            void* contiguous_position = (void*)((char*)current_ptr->actual_position()) + current_ptr->size();
+            std::cout <<
+                ((contiguous_position == (void*)((char*)current_ptr->back_cell()->actual_position()))
+                    ? "C)] ->"
+                    : " )] ->")
+                << std::endl;
+
             current_ptr = current_ptr->fwd_cell();
         }
     }
