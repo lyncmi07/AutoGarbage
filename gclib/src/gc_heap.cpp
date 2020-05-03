@@ -56,13 +56,6 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
         {
             gc::heap::cell* resized_cell = next_free_cell->resize(size);
 
-
-            /*if (resized_cell != nullptr && !(next_free_cell == current_largest_cell || resized_cell->size() >= current_largest_cell->size()))
-            {
-                replace_free_start(current_largest_cell);
-            }*/
-
-
             next_free_cell->fwd_link_treadmill(nullptr);
             next_free_cell->back_link_treadmill(nullptr);
             return next_free_cell;
@@ -70,7 +63,6 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
         else if (next_free_cell->size() == size)
         {
             next_free_cell->unlink_treadmill();
-            // if (next_free_cell != current_largest_cell) replace_free_start(current_largest_cell);
 
             return next_free_cell;
         }
