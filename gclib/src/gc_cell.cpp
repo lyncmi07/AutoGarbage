@@ -37,6 +37,26 @@ void gc::heap::cell::back_link_treadmill(gc::heap::cell* prev_cell)
     if (_back_treadmill != nullptr) _back_treadmill->_fwd_treadmill = this;
 }
 
+void gc::heap::cell::unlink_location()
+{
+    if (_back_location != nullptr) _back_location->_fwd_location = _fwd_location;
+    if (_fwd_location != nullptr) _fwd_location->_back_location = _back_location;
+}
+
+void gc::heap::cell::fwd_link_location(gc::heap::cell* next_cell)
+{
+    if (next_cell == this) throw std::exception();
+    _fwd_location = next_cell;
+    if (_fwd_location != nullptr) _fwd_location->_back_location = this;
+}
+
+void gc::heap::cell::back_link_location(gc::heap::cell* prev_cell)
+{
+    if (prev_cell == this) throw std::exception();
+    _back_location = prev_cell;
+    if (_back_location != nullptr) _back_location->_fwd_location = this;
+}
+
 void* gc::heap::cell::actual_position()
 {
     char* actual_position = (char*) this;
@@ -93,5 +113,24 @@ void gc::heap::cell::merge_with_fwd_treadmill()
 {
     size_t fwd_cell_size = fwd_treadmill()->size();
     fwd_link_treadmill(fwd_treadmill()->fwd_treadmill());
+    _size += fwd_cell_size;
+}
+
+bool gc::heap::cell::mergable_with_back_location()
+{
+    return back_location()->mergable_with_fwd_location();
+}
+
+bool gc::heap::cell::mergable_with_fwd_location()
+{
+    void* contiguous_position = (void*)((char*)actual_position()) + size();
+
+    return contiguous_position == (void*)((char*)fwd_location()->actual_position());
+}
+
+void gc::heap::cell::merge_with_fwd_location()
+{
+    size_t fwd_cell_size = fwd_location()->size();
+    fwd_link_location(fwd_location()->fwd_location());
     _size += fwd_cell_size;
 }
