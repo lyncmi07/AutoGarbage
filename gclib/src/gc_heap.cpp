@@ -21,7 +21,7 @@ gc::heap::heap_struct::heap_struct(size_t heap_size):
     _scan(new gc::heap::cell(nullptr, nullptr, 0, false)),
     _free(new gc::heap::cell(nullptr, nullptr, 0, false)),
     _static_objects_start_ptr(nullptr),
-    _odd_iteration(true)
+    _gc_iteration(0)
 {
     gc::heap::cell* initial_free_cell = (gc::heap::cell*) _heap_space;
     (*initial_free_cell) = gc::heap::cell(nullptr, nullptr, heap_size, false);
@@ -315,7 +315,7 @@ void gc::heap::heap_struct::replace_free_start(gc::heap::cell* obj)
 void gc::heap::heap_struct::flip()
 {
     flip_list();
-    _odd_iteration = !_odd_iteration;
+    _gc_iteration++;
 }
 
 void gc::heap::heap_struct::collect_garbage()

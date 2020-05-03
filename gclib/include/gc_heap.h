@@ -47,7 +47,7 @@ namespace heap
             std::vector<gc::heap::fragment_memory*> _fragment_memory_list;
             unsigned int _fragment_size;
 
-            bool _odd_iteration;
+            char _gc_iteration;
 
             heap_struct(size_t heap_size);
             ~heap_struct();
@@ -93,9 +93,9 @@ namespace heap
             gc::heap::cell* free();
 
 
-            inline bool odd_iteration()
+            inline char gc_iteration()
             {
-                return _odd_iteration;
+                return _gc_iteration;
             }
 
             void add_static(void* sptr);

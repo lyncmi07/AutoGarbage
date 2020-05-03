@@ -41,7 +41,7 @@ bool* gc::object::gc_fields_end() { return nullptr; }
 gc::object::object():
     cell(_size, true),
     _mark('I'),
-    _iteration(gc::heap::heap_struct::get()->odd_iteration())
+    _iteration(gc::heap::heap_struct::get()->gc_iteration())
 {
 }
 
@@ -69,7 +69,7 @@ void gc::object::gc_mark()
     switch (_mark) //seg fault
     {
         case 'B':
-            if (_iteration == gc::heap::heap_struct::get()->odd_iteration())
+            if (_iteration == gc::heap::heap_struct::get()->gc_iteration())
             {
                 return;
             }
@@ -77,7 +77,7 @@ void gc::object::gc_mark()
             {
                 //Move to next iteration:
                 gc_grey();
-                _iteration = gc::heap::heap_struct::get()->odd_iteration();
+                _iteration = gc::heap::heap_struct::get()->gc_iteration();
                 return;
             }
         case 'G':
