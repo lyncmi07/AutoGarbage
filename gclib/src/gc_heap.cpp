@@ -26,11 +26,11 @@ gc::heap::heap_struct::heap_struct(size_t heap_size):
     gc::heap::cell* initial_free_cell = (gc::heap::cell*) _heap_space;
     (*initial_free_cell) = gc::heap::cell(nullptr, nullptr, heap_size, false);
 
-    _bottom->fwd_link(_top);
-    _top->fwd_link(_scan);
-    _scan->fwd_link(_free);
-    _free->fwd_link(initial_free_cell);
-    initial_free_cell->fwd_link(_bottom);
+    _bottom->fwd_link_treadmill(_top);
+    _top->fwd_link_treadmill(_scan);
+    _scan->fwd_link_treadmill(_free);
+    _free->fwd_link_treadmill(initial_free_cell);
+    initial_free_cell->fwd_link_treadmill(_bottom);
 
     _garbage_collection_cycle = 0;
 }
@@ -63,13 +63,13 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
             }*/
 
 
-            next_free_cell->fwd_link(nullptr);
-            next_free_cell->back_link(nullptr);
+            next_free_cell->fwd_link_treadmill(nullptr);
+            next_free_cell->back_link_treadmill(nullptr);
             return next_free_cell;
         }
         else if (next_free_cell->size() == size)
         {
-            next_free_cell->unlink();
+            next_free_cell->unlink_treadmill();
             // if (next_free_cell != current_largest_cell) replace_free_start(current_largest_cell);
 
             return next_free_cell;
@@ -82,16 +82,16 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
         {
             //Cell is not large enough. Can it be merged with the next cell?
 
-            if (next_free_cell->mergable_with_fwd_cell())
+            if (next_free_cell->mergable_with_fwd_treadmill())
             {
                 //Merge cells and try again
-                next_free_cell->merge_with_fwd_cell();
+                next_free_cell->merge_with_fwd_treadmill();
 
             }
             else
             {
                 //Unable to merge cells, try next cell
-                next_free_cell = next_free_cell->fwd_cell();
+                next_free_cell = next_free_cell->fwd_treadmill();
             }
 
         }
@@ -107,14 +107,14 @@ void gc::heap::heap_struct::add_to_initialization_list(gc::object* object)
     gc::object* current_start = _initialization_objects_start_ptr;
 
     _initialization_objects_start_ptr = object;
-    object->fwd_link(current_start);
-    object->back_link(nullptr);
+    object->fwd_link_treadmill(current_start);
+    object->back_link_treadmill(nullptr);
 }
 
 void gc::heap::heap_struct::remove_from_initialization_list(gc::object* object)
 {
     gc::object* fwd_ptr = object->fwd_object();
-    object->unlink();
+    object->unlink_treadmill();
     if (_initialization_objects_start_ptr == object)
     {
         _initialization_objects_start_ptr = fwd_ptr;
@@ -255,7 +255,7 @@ void gc::heap::heap_struct::print_heap_pointers()
     for (unsigned int ptr_index = 0; ptr_index < 4; ptr_index++)
     {
         std::cout << ptr_names[ptr_index] << ":" << heap_ptrs[ptr_index] << " -> " << std::endl;
-        gc::heap::cell* current_ptr = heap_ptrs[ptr_index]->fwd_cell();
+        gc::heap::cell* current_ptr = heap_ptrs[ptr_index]->fwd_treadmill();
         gc::heap::cell* last_ptr = heap_ptrs[ptr_index+1];
 
         while (current_ptr != last_ptr)
@@ -265,12 +265,12 @@ void gc::heap::heap_struct::print_heap_pointers()
             //Check contiguous with next cell
             void* contiguous_position = (void*)((char*)current_ptr->actual_position()) + current_ptr->size();
             std::cout <<
-                ((contiguous_position == (void*)((char*)current_ptr->fwd_cell()->actual_position()))
+                ((contiguous_position == (void*)((char*)current_ptr->fwd_treadmill()->actual_position()))
                     ? "C)] ->"
                     : " )] ->")
                 << std::endl;
 
-            current_ptr = current_ptr->fwd_cell();
+            current_ptr = current_ptr->fwd_treadmill();
         }
     }
 
@@ -279,37 +279,37 @@ void gc::heap::heap_struct::print_heap_pointers()
 
 void gc::heap::heap_struct::make_black(gc::object* obj)
 {
-    obj->unlink();
-    obj->fwd_link(_bottom->fwd_cell());
-    obj->back_link(_bottom);
+    obj->unlink_treadmill();
+    obj->fwd_link_treadmill(_bottom->fwd_treadmill());
+    obj->back_link_treadmill(_bottom);
 }
 
 void gc::heap::heap_struct::make_grey(gc::object* obj)
 {
-    obj->unlink();
-    obj->back_link(_scan->back_cell());
-    obj->fwd_link(_scan);
+    obj->unlink_treadmill();
+    obj->back_link_treadmill(_scan->back_treadmill());
+    obj->fwd_link_treadmill(_scan);
 }
 
 void gc::heap::heap_struct::make_ecru(gc::object* obj)
 {
-    obj->unlink();
-    obj->back_link(_free->back_cell());
-    obj->fwd_link(_free);
+    obj->unlink_treadmill();
+    obj->back_link_treadmill(_free->back_treadmill());
+    obj->fwd_link_treadmill(_free);
 }
 
 void gc::heap::heap_struct::make_white(gc::heap::cell* obj)
 {
-    obj->unlink();
-    obj->back_link(_bottom->back_cell());
-    obj->fwd_link(_bottom);
+    obj->unlink_treadmill();
+    obj->back_link_treadmill(_bottom->back_treadmill());
+    obj->fwd_link_treadmill(_bottom);
 }
 
 void gc::heap::heap_struct::replace_free_start(gc::heap::cell* obj)
 {
-    obj->unlink();
-    obj->fwd_link(_free->fwd_cell());
-    _free->fwd_link(obj);
+    obj->unlink_treadmill();
+    obj->fwd_link_treadmill(_free->fwd_treadmill());
+    _free->fwd_link_treadmill(obj);
 }
 
 void gc::heap::heap_struct::flip()
@@ -340,34 +340,34 @@ void gc::heap::heap_struct::grey_static_ptrs()
 
 void gc::heap::heap_struct::ungrey_all()
 {
-    gc::heap::cell* current_cell(_scan->back_cell());
+    gc::heap::cell* current_cell(_scan->back_treadmill());
 
     while(current_cell != _top)
     {
         gc::object* current_object = (gc::object*) current_cell;
         current_object->gc_mark();
-        current_cell = _scan->back_cell();
+        current_cell = _scan->back_treadmill();
     }
 }
 
 gc::object* gc::heap::heap_struct::bottom()
 {
-    return (gc::object*) _bottom->fwd_cell();
+    return (gc::object*) _bottom->fwd_treadmill();
 }
 
 gc::object* gc::heap::heap_struct::top()
 {
-    return (gc::object*) _top->fwd_cell();
+    return (gc::object*) _top->fwd_treadmill();
 }
 
 gc::object* gc::heap::heap_struct::scan()
 {
-    return (gc::object*) _scan->fwd_cell();
+    return (gc::object*) _scan->fwd_treadmill();
 }
 
 gc::heap::cell* gc::heap::heap_struct::free()
 {
-    return _free->fwd_cell();
+    return _free->fwd_treadmill();
 }
 
 
@@ -375,37 +375,37 @@ void gc::heap::heap_struct::flip_list()
 {
     {
         //white to free: _scan->f->l->_free->e => _scan->_free->f->l->e
-        auto first_scan_cell = _scan->fwd_cell(); //f
-        auto last_scan_cell = _free->back_cell(); //l
-        auto first_free_cell = _free->fwd_cell(); //e
+        auto first_scan_cell = _scan->fwd_treadmill(); //f
+        auto last_scan_cell = _free->back_treadmill(); //l
+        auto first_free_cell = _free->fwd_treadmill(); //e
 
         if (first_scan_cell != _free)
         {
             // _scan->_free
-            _scan->fwd_link(_free);
+            _scan->fwd_link_treadmill(_free);
 
             // l->e
-            last_scan_cell->fwd_link(first_free_cell);
+            last_scan_cell->fwd_link_treadmill(first_free_cell);
     
             // _free->f
-            _free->fwd_link(first_scan_cell);
+            _free->fwd_link_treadmill(first_scan_cell);
         }
     }
     {
         // black to white: _bottom->f->l->_top->_scan->_free => _bottom->_top->_scan->f->l->_free
-        auto first_bottom_cell = _bottom->fwd_cell(); //f
-        auto last_bottom_cell = _top->back_cell(); //l
+        auto first_bottom_cell = _bottom->fwd_treadmill(); //f
+        auto last_bottom_cell = _top->back_treadmill(); //l
 
         if (first_bottom_cell != _top)
         {
             // _bottom->_top
-            _bottom->fwd_link(_top);
+            _bottom->fwd_link_treadmill(_top);
 
             // _scan->f
-            _scan->fwd_link(first_bottom_cell);
+            _scan->fwd_link_treadmill(first_bottom_cell);
 
             // l->_free
-            last_bottom_cell->fwd_link(_free);
+            last_bottom_cell->fwd_link_treadmill(_free);
         }
     }
 }

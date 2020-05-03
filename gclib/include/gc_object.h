@@ -39,12 +39,12 @@ namespace gc
 
             inline gc::object* fwd_object()
             {
-                return (gc::object*) fwd_cell();
+                return (gc::object*) fwd_treadmill();
             }
 
             inline gc::object* back_object()
             {
-                return (gc::object*) back_cell();
+                return (gc::object*) back_treadmill();
             }
     };
 
