@@ -27,7 +27,7 @@ int assert_in_list(gc::heap::cell* first_list_cell, gc::heap::cell* list_end_cel
     while (current_cell != list_end_cell)
     {
         if (current_cell == cell) return 0;
-        current_cell = current_cell->fwd_cell();
+        current_cell = current_cell->fwd_treadmill();
     }
 
     return 1;
@@ -37,7 +37,7 @@ int assert_bottom(gc::heap::cell* cell)
 {
     return assert_in_list(
             gc::heap::heap_struct::get()->bottom(),
-            gc::heap::heap_struct::get()->top()->back_cell(),
+            gc::heap::heap_struct::get()->top()->back_treadmill(),
             cell);
 }
 
@@ -45,21 +45,21 @@ int assert_top(gc::heap::cell* cell)
 {
     return assert_in_list(
             gc::heap::heap_struct::get()->top(),
-            gc::heap::heap_struct::get()->scan()->back_cell(),
+            gc::heap::heap_struct::get()->scan()->back_treadmill(),
             cell);
 }
 int assert_scan(gc::heap::cell* cell)
 {
     return assert_in_list(
             gc::heap::heap_struct::get()->scan(),
-            gc::heap::heap_struct::get()->free()->back_cell(),
+            gc::heap::heap_struct::get()->free()->back_treadmill(),
             cell);
 }
 int assert_free(gc::heap::cell* cell)
 {
     return assert_in_list(
             gc::heap::heap_struct::get()->free(),
-            gc::heap::heap_struct::get()->bottom()->back_cell(),
+            gc::heap::heap_struct::get()->bottom()->back_treadmill(),
             cell);
 }
 
