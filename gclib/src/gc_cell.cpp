@@ -52,7 +52,7 @@ gc::heap::cell* gc::heap::cell::resize(size_t size_decrease)
     size_t new_size = size() - size_decrease;
     gc::heap::cell* new_cell_position = (gc::heap::cell*) (((char*)this->actual_position()) + size_decrease);
 
-    if (new_size < sizeof(gc::heap::cell))
+    if (!mergable_with_fwd_cell() && new_size < sizeof(gc::heap::cell))
     {
         //not large enough to support a cell, moving to fragment memory
         gc::heap::heap_struct::get()->add_fragment_memory(new_cell_position, new_size);
@@ -61,7 +61,15 @@ gc::heap::cell* gc::heap::cell::resize(size_t size_decrease)
         return nullptr;
     }
 
-    (*new_cell_position) = cell(back_cell(), fwd_cell(), new_size, false);
+    if (mergable_with_fwd_cell())
+    {
+        //merge with next cell
+        (*new_cell_position) = cell(back_cell(), fwd_cell()->fwd_cell(), new_size + fwd_cell()->size(), false);
+    }
+    else
+    {
+        (*new_cell_position) = cell(back_cell(), fwd_cell(), new_size, false);
+    }
 
     new_cell_position->back_cell()->fwd_link(new_cell_position);
     new_cell_position->fwd_cell()->back_link(new_cell_position);
@@ -71,20 +79,19 @@ gc::heap::cell* gc::heap::cell::resize(size_t size_decrease)
 
 bool gc::heap::cell::mergable_with_back_cell()
 {
-    void* contiguous_position = (void*)((char*)actual_position()) + size();
-
-    return contiguous_position == (void*)((char*)back_cell()->actual_position());
+    return back_cell()->mergable_with_back_cell();
 }
 
 bool gc::heap::cell::mergable_with_fwd_cell()
 {
-    return fwd_cell()->mergable_with_back_cell();
+    void* contiguous_position = (void*)((char*)actual_position()) + size();
+
+    return contiguous_position == (void*)((char*)fwd_cell()->actual_position());
 }
 
-void gc::heap::cell::merge_with_back_cell()
+void gc::heap::cell::merge_with_fwd_cell()
 {
-    size_t back_cell_size = back_cell()->size();
-    _back_cell = back_cell()->back_cell();
-    _back_cell->_fwd_cell = this;
-    _size += back_cell_size;
+    size_t fwd_cell_size = fwd_cell()->size();
+    fwd_link(fwd_cell()->fwd_cell());
+    _size += fwd_cell_size;
 }

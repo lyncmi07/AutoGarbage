@@ -82,10 +82,10 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
         {
             //Cell is not large enough. Can it be merged with the next cell?
 
-            if (next_free_cell->mergable_with_back_cell())
+            if (next_free_cell->mergable_with_fwd_cell())
             {
                 //Merge cells and try again
-                next_free_cell->merge_with_back_cell();
+                next_free_cell->merge_with_fwd_cell();
 
             }
             else

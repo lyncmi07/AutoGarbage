@@ -44,7 +44,7 @@ namespace gc
             bool mergable_with_fwd_cell();
 
             //Makes the assumption that the back cell has an address which is larger than this
-            void merge_with_back_cell();
+            void merge_with_fwd_cell();
     };
 }}
 
