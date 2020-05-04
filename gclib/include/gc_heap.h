@@ -33,15 +33,11 @@ namespace heap
             unsigned int _garbage_collection_cycle;
 
             gc::heap::cell *const _bottom;
-
             gc::heap::cell *const _top;
-
             gc::heap::cell *const _scan;
-
             gc::heap::cell *const _free;
 
             gc::static_ptr<gc::object>* _static_objects_start_ptr;
-
             gc::object* _initialization_objects_start_ptr;
 
             std::vector<gc::heap::fragment_memory*> _fragment_memory_list;
@@ -76,15 +72,8 @@ namespace heap
                 return INSTANCE;
             }
 
-            inline gc::static_ptr<gc::object>* static_objects_start_ptr()
-            {
-                return _static_objects_start_ptr;
-            }
-
-            inline gc::object* initialization_objects_start_ptr()
-            {
-                return _initialization_objects_start_ptr;
-            }
+            inline gc::static_ptr<gc::object>* static_objects_start_ptr();
+            inline gc::object* initialization_objects_start_ptr();
 
             gc::object* bottom();
             gc::object* top();
@@ -93,10 +82,7 @@ namespace heap
             gc::heap::cell* free();
 
 
-            inline char gc_iteration()
-            {
-                return _gc_iteration;
-            }
+            inline char gc_iteration();
 
             void add_static(void* sptr);
             void remove_static(void* sptr);
@@ -125,4 +111,19 @@ namespace heap
     };
 }}
 
+
+gc::static_ptr<gc::object>* gc::heap::heap_struct::static_objects_start_ptr()
+{
+    return _static_objects_start_ptr;
+}
+
+gc::object* gc::heap::heap_struct::initialization_objects_start_ptr()
+{
+    return _initialization_objects_start_ptr;
+}
+
+char gc::heap::heap_struct::gc_iteration()
+{
+    return _gc_iteration;
+}
 #endif

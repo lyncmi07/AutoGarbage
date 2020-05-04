@@ -49,6 +49,8 @@ namespace gc
             bool mergable_with_back_location();
             bool mergable_with_fwd_location();
             void merge_with_fwd_location();
+
+            bool garunteed_free();
     };
 }}
 
