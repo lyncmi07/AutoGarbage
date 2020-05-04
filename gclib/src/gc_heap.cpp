@@ -16,15 +16,15 @@ gc::heap::fragment_memory::fragment_memory(void* _fragment_position, size_t _siz
 gc::heap::heap_struct::heap_struct(size_t heap_size):
     _heap_size(heap_size),
     _heap_space((void*) new char[_heap_size]),
-    _bottom(new gc::heap::cell(nullptr, nullptr, 0, false)),
-    _top(new gc::heap::cell(nullptr, nullptr, 0, false)),
-    _scan(new gc::heap::cell(nullptr, nullptr, 0, false)),
-    _free(new gc::heap::cell(nullptr, nullptr, 0, false)),
+    _bottom(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),
+    _top(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),
+    _scan(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),
+    _free(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),
     _static_objects_start_ptr(nullptr),
     _gc_iteration(0)
 {
     gc::heap::cell* initial_free_cell = (gc::heap::cell*) _heap_space;
-    (*initial_free_cell) = gc::heap::cell(nullptr, nullptr, heap_size, false);
+    (*initial_free_cell) = gc::heap::cell(nullptr, nullptr, heap_size, false, 0);
 
     _bottom->fwd_link_treadmill(_top);
     _top->fwd_link_treadmill(_scan);
@@ -74,10 +74,23 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
         {
             //Cell is not large enough. Can it be merged with the next cell?
 
-            if (next_free_cell->mergable_with_fwd_treadmill())
+            /*if (next_free_cell->mergable_with_fwd_treadmill())
             {
                 //Merge cells and try again
                 next_free_cell->merge_with_fwd_treadmill();
+
+            }
+            else
+            {
+                //Unable to merge cells, try next cell
+                next_free_cell = next_free_cell->fwd_treadmill();
+            }*/
+
+            if (next_free_cell->fwd_location() != nullptr && next_free_cell->fwd_location()->garunteed_free() && next_free_cell->mergable_with_fwd_location())
+            {
+                //Merge cells and try again
+                next_free_cell->fwd_location()->unlink_treadmill();
+                next_free_cell->merge_with_fwd_location();
 
             }
             else
@@ -261,6 +274,13 @@ void gc::heap::heap_struct::print_heap_pointers()
                     ? "C)] ->"
                     : " )] ->")
                 << std::endl;
+
+            std::cout << (current_ptr->fwd_location() != nullptr) << std::endl;
+
+            /*std::cout << ((current_ptr->fwd_location() != nullptr && current_ptr->fwd_location()->garunteed_free())
+                    ? "C)] ->"
+                    : " )] ->")
+                << std::endl;*/
 
             current_ptr = current_ptr->fwd_treadmill();
         }

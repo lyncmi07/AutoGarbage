@@ -15,7 +15,6 @@ namespace gc
         private:
             char _mark;
             size_t _size;
-            char _iteration;
 
             void gc_ecru();
             void gc_grey();

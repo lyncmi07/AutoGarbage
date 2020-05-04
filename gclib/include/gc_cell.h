@@ -16,6 +16,7 @@ namespace gc
             gc::heap::cell* _fwd_location;
 
             size_t _size;
+            char _iteration;
 
             bool _using_vtable_offset;
         public:
@@ -27,8 +28,8 @@ namespace gc
             void fwd_link_location(gc::heap::cell* next_cell);
             void back_link_location(gc::heap::cell* prev_cell);
 
-            cell(size_t size, bool using_vtable_offset);
-            cell(gc::heap::cell* back_treadmill, gc::heap::cell* fwd_treadmill, size_t size, bool using_vtable_offset);
+            cell(size_t size, bool using_vtable_offset, char iteration);
+            cell(gc::heap::cell* back_treadmill, gc::heap::cell* fwd_treadmill, size_t size, bool using_vtable_offset, char iteration);
 
             inline size_t size();
 
@@ -51,6 +52,9 @@ namespace gc
             void merge_with_fwd_location();
 
             bool garunteed_free();
+
+            bool iteration_stale();
+            void update_iteration();
     };
 }}
 

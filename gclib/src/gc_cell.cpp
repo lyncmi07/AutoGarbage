@@ -3,16 +3,18 @@
 
 #include <exception>
 
-gc::heap::cell::cell(size_t size, bool using_vtable_offset):
+gc::heap::cell::cell(size_t size, bool using_vtable_offset, char iteration):
     _size(size),
+    _iteration(iteration),
     _using_vtable_offset(using_vtable_offset)
 {
 }
 
-gc::heap::cell::cell(gc::heap::cell* back_treadmill, gc::heap::cell* fwd_treadmill, size_t size, bool using_vtable_offset):
+gc::heap::cell::cell(gc::heap::cell* back_treadmill, gc::heap::cell* fwd_treadmill, size_t size, bool using_vtable_offset, char iteration):
     _back_treadmill(back_treadmill),
     _fwd_treadmill(fwd_treadmill),
     _size(size),
+    _iteration(iteration),
     _using_vtable_offset(using_vtable_offset)
 {
 }
@@ -84,11 +86,11 @@ gc::heap::cell* gc::heap::cell::resize(size_t size_decrease)
     if (mergable_with_fwd_treadmill())
     {
         //merge with next cell
-        (*new_cell_position) = cell(back_treadmill(), fwd_treadmill()->fwd_treadmill(), new_size + fwd_treadmill()->size(), false);
+        (*new_cell_position) = cell(back_treadmill(), fwd_treadmill()->fwd_treadmill(), new_size + fwd_treadmill()->size(), false, gc::heap::heap_struct::get()->gc_iteration());
     }
     else
     {
-        (*new_cell_position) = cell(back_treadmill(), fwd_treadmill(), new_size, false);
+        (*new_cell_position) = cell(back_treadmill(), fwd_treadmill(), new_size, false, gc::heap::heap_struct::get()->gc_iteration());
     }
 
     new_cell_position->back_treadmill()->fwd_link_treadmill(new_cell_position);
@@ -133,4 +135,20 @@ void gc::heap::cell::merge_with_fwd_location()
     size_t fwd_cell_size = fwd_location()->size();
     fwd_link_location(fwd_location()->fwd_location());
     _size += fwd_cell_size;
+}
+
+bool gc::heap::cell::garunteed_free()
+{
+    char global_gc_iteration = gc::heap::heap_struct::get()->gc_iteration();
+    return (_iteration != global_gc_iteration) && (_iteration != (global_gc_iteration - 1)); //Not using less than because the integer wraps
+}
+
+bool gc::heap::cell::iteration_stale()
+{
+    return _iteration != gc::heap::heap_struct::get()->gc_iteration();
+}
+
+void gc::heap::cell::update_iteration()
+{
+    _iteration = gc::heap::heap_struct::get()->gc_iteration();
 }

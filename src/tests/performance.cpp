@@ -61,8 +61,8 @@ int main()
                 Timer singleAllocationTimer("Single allocation");
                 gc::static_ptr<RandomSizeObject> rso(new RandomSizeObject());
             }
-            gc::heap::heap_struct::get()->print_gc_info();
-            // gc::heap::heap_struct::get()->print_gc_debug();
+            // gc::heap::heap_struct::get()->print_gc_info();
+            gc::heap::heap_struct::get()->print_gc_debug();
         }
     }
 }
