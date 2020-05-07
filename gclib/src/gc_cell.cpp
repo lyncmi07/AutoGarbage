@@ -96,6 +96,10 @@ gc::heap::cell* gc::heap::cell::resize(size_t size_decrease)
         //Unable to make own cell. Must merge with an existing cell
         if (fwd_location() != nullptr && mergable_with_fwd_location() && fwd_location()->garunteed_free())
         {
+            //This must be performed before creating the new cell as the data will become corrupted
+            gc::heap::cell* next_position = fwd_location()->fwd_location();
+            fwd_location()->unlink_treadmill();
+
             (*new_cell_position) = 
                 cell(
                     nullptr,
@@ -105,10 +109,8 @@ gc::heap::cell* gc::heap::cell::resize(size_t size_decrease)
                     gc::heap::heap_struct::get()->gc_iteration());
 
             new_cell_position->back_link_treadmill(back_treadmill());
-            new_cell_position->fwd_link_treadmill(fwd_treadmill()->fwd_treadmill());
+            new_cell_position->fwd_link_treadmill(fwd_treadmill());
 
-            gc::heap::cell* next_position = fwd_location()->fwd_location();
-            fwd_location()->unlink_treadmill();
 
             new_cell_position->fwd_link_location(next_position);
             new_cell_position->back_link_location(this);

@@ -267,6 +267,8 @@ void gc::heap::heap_struct::print_heap_pointers()
         _bottom
     };
 
+    size_t total_heap_size_found = 0;
+
     for (unsigned int ptr_index = 0; ptr_index < 4; ptr_index++)
     {
         std::cout << ptr_names[ptr_index] << ":" << heap_ptrs[ptr_index] << " -> " << std::endl;
@@ -276,6 +278,8 @@ void gc::heap::heap_struct::print_heap_pointers()
         while (current_ptr != last_ptr)
         {
             std::cout << "[" << current_ptr << "(" << current_ptr->actual_position() << "):" << current_ptr->size() << "(";
+
+            total_heap_size_found += current_ptr->size();
 
             std::cout <<
                 ((current_ptr->fwd_location() != nullptr)
@@ -292,6 +296,7 @@ void gc::heap::heap_struct::print_heap_pointers()
     }
 
     std::cout << "bottom }" << std::endl;
+    std::cout << "Heap space found: " << total_heap_size_found << " bytes" << std::endl;
 }
 
 void gc::heap::heap_struct::make_black(gc::object* obj)
