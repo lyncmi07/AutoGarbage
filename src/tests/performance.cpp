@@ -12,9 +12,13 @@ class Timer
 private:
     const std::chrono::time_point<std::chrono::steady_clock> _startTime;
     const std::string _name;
+    const double _divisor;
 
 public:
-    Timer(const std::string& name): _startTime(std::chrono::steady_clock::now()), _name(name)
+    Timer(const std::string& name, const double divisor):
+        _startTime(std::chrono::steady_clock::now()),
+        _name(name),
+        _divisor(divisor)
     {
     }
 
@@ -23,7 +27,10 @@ public:
         std::chrono::time_point<std::chrono::steady_clock> _endTime = std::chrono::steady_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(_endTime - _startTime);
 
-        std::cout << "Timer '" << _name << "' ended: " << duration.count() << std::endl;
+        std::cout << "Timer '" << _name << "' ended: "
+            << ((duration.count() * 1.0) / _divisor)
+            << " * " << _divisor;
+            // << std::endl;
     }
 };
 
@@ -51,18 +58,18 @@ int main()
 
     std::cout << "Running performance test" << std::endl;
 
-    gc::heap::heap_struct::init_gc(4000);
+    gc::heap::heap_struct::init_gc(10000000);
 
     {
-        Timer allAllocationsTimer("1,000,000,000 Allocations");
-        for(unsigned long i = 0; i < 1000000000; i++)
+        Timer allAllocationsTimer("1,000,000 Allocations", 1000000.0);
+        for(unsigned long i = 0; i < 1000000; i++)
         {
             {
-                Timer singleAllocationTimer("Single allocation");
+                // Timer singleAllocationTimer("Single allocation", 1.0);
                 gc::static_ptr<RandomSizeObject> rso(new RandomSizeObject());
             }
             // gc::heap::heap_struct::get()->print_gc_info();
-            gc::heap::heap_struct::get()->print_gc_debug();
+            // gc::heap::heap_struct::get()->print_gc_debug();
         }
     }
 }
