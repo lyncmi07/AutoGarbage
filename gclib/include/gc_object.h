@@ -14,7 +14,6 @@ namespace gc
     {
         private:
             char _mark;
-            size_t _size;
 
             void gc_ecru();
             void gc_grey();
@@ -28,7 +27,6 @@ namespace gc
 
             void* operator new(size_t size);
 
-            size_t size();
             char current_mark();
 
 	        void gc_mark();

@@ -39,7 +39,7 @@ bool* gc::object::gc_fields_end() { return nullptr; }
 
 
 gc::object::object():
-    cell(_size, true, gc::heap::heap_struct::get()->gc_iteration()),
+    cell(true, gc::heap::heap_struct::get()->gc_iteration()),
     _mark('I')
 {
 }
@@ -48,14 +48,7 @@ void* gc::object::operator new(size_t size)
 {
     void* p = gc::heap::heap_struct::get()->malloc(size);
 
-    ((object*)p)->_size = size;
-
     return p;
-}
-
-size_t gc::object::size()
-{
-    return _size;
 }
 
 char gc::object::current_mark()

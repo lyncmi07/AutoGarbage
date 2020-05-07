@@ -32,6 +32,9 @@ gc::heap::heap_struct::heap_struct(size_t heap_size):
     _free->fwd_link_treadmill(initial_free_cell);
     initial_free_cell->fwd_link_treadmill(_bottom);
 
+    initial_free_cell->back_link_location(nullptr);
+    initial_free_cell->fwd_link_location(nullptr);
+
     _garbage_collection_cycle = 0;
 }
 
@@ -56,8 +59,6 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
         {
             gc::heap::cell* resized_cell = next_free_cell->resize(size);
 
-            next_free_cell->fwd_link_treadmill(nullptr);
-            next_free_cell->back_link_treadmill(nullptr);
             return next_free_cell;
         }
         else if (next_free_cell->size() == size)
@@ -66,7 +67,7 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
 
             return next_free_cell;
         }
-        else if(next_free_cell-> size() > current_largest_cell->size())
+        else if(next_free_cell->size() > current_largest_cell->size())
         {
             current_largest_cell = next_free_cell;
         }
@@ -147,8 +148,17 @@ void* gc::heap::heap_struct::malloc(size_t size)
     throw std::bad_alloc();
 
 return_allocation:
-    add_to_initialization_list((gc::object*) allocation_current_cell->actual_position());
-    return allocation_current_cell->actual_position();
+    size_t actual_size_allocated = allocation_current_cell->size();
+    gc::heap::cell* back_location = allocation_current_cell->back_location();
+    gc::heap::cell* fwd_location = allocation_current_cell->fwd_location();
+    gc::object* positioned_object = (gc::object*) allocation_current_cell->actual_position();
+
+    positioned_object->set_size(actual_size_allocated);
+    positioned_object->back_link_location(back_location);
+    positioned_object->fwd_link_location(fwd_location);
+
+    add_to_initialization_list(positioned_object);
+    return positioned_object;
 }
 
 void gc::heap::heap_struct::add_static(void* sptr)
@@ -267,20 +277,15 @@ void gc::heap::heap_struct::print_heap_pointers()
         {
             std::cout << "[" << current_ptr << "(" << current_ptr->actual_position() << "):" << current_ptr->size() << "(";
 
-            //Check contiguous with next cell
-            void* contiguous_position = (void*)((char*)current_ptr->actual_position()) + current_ptr->size();
             std::cout <<
-                ((contiguous_position == (void*)((char*)current_ptr->fwd_treadmill()->actual_position()))
-                    ? "C)] ->"
-                    : " )] ->")
+                ((current_ptr->fwd_location() != nullptr)
+                 ? ((current_ptr->back_location() != nullptr)
+                     ? "X)] ->"
+                     : ">)] ->")
+                 : ((current_ptr->back_location() != nullptr)
+                     ? "<)] ->"
+                     : " )] ->"))
                 << std::endl;
-
-            std::cout << (current_ptr->fwd_location() != nullptr) << std::endl;
-
-            /*std::cout << ((current_ptr->fwd_location() != nullptr && current_ptr->fwd_location()->garunteed_free())
-                    ? "C)] ->"
-                    : " )] ->")
-                << std::endl;*/
 
             current_ptr = current_ptr->fwd_treadmill();
         }
@@ -352,13 +357,13 @@ void gc::heap::heap_struct::grey_static_ptrs()
 
 void gc::heap::heap_struct::ungrey_all()
 {
-    gc::heap::cell* current_cell(_scan->back_treadmill());
+    gc::heap::cell* current_cell(_top->fwd_treadmill());
 
-    while(current_cell != _top)
+    while(current_cell != _scan)
     {
         gc::object* current_object = (gc::object*) current_cell;
         current_object->gc_mark();
-        current_cell = _scan->back_treadmill();
+        current_cell = _top->fwd_treadmill();
     }
 }
 

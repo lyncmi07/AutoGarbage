@@ -3,8 +3,7 @@
 
 #include <exception>
 
-gc::heap::cell::cell(size_t size, bool using_vtable_offset, char iteration):
-    _size(size),
+gc::heap::cell::cell(bool using_vtable_offset, char iteration):
     _iteration(iteration),
     _using_vtable_offset(using_vtable_offset)
 {
@@ -74,29 +73,58 @@ gc::heap::cell* gc::heap::cell::resize(size_t size_decrease)
     size_t new_size = size() - size_decrease;
     gc::heap::cell* new_cell_position = (gc::heap::cell*) (((char*)this->actual_position()) + size_decrease);
 
-    if (!mergable_with_fwd_treadmill() && new_size < sizeof(gc::heap::cell))
+    if (new_size > sizeof(gc::heap::cell))
     {
-        //not large enough to support a cell, moving to fragment memory
-        gc::heap::heap_struct::get()->add_fragment_memory(new_cell_position, new_size);
+        (*new_cell_position) =
+            cell(
+                nullptr,
+                nullptr,
+                new_size,
+                false,
+                gc::heap::heap_struct::get()->gc_iteration());
 
-        unlink_treadmill();
-        return nullptr;
-    }
+        new_cell_position->back_link_treadmill(back_treadmill());
+        new_cell_position->fwd_link_treadmill(fwd_treadmill());
+        new_cell_position->fwd_link_location(fwd_location());
+        new_cell_position->back_link_location(this);
+        _size = size_decrease;
 
-    if (mergable_with_fwd_treadmill())
-    {
-        //merge with next cell
-        (*new_cell_position) = cell(back_treadmill(), fwd_treadmill()->fwd_treadmill(), new_size + fwd_treadmill()->size(), false, gc::heap::heap_struct::get()->gc_iteration());
+        return new_cell_position;
     }
     else
     {
-        (*new_cell_position) = cell(back_treadmill(), fwd_treadmill(), new_size, false, gc::heap::heap_struct::get()->gc_iteration());
+        //Unable to make own cell. Must merge with an existing cell
+        if (fwd_location() != nullptr && mergable_with_fwd_location() && fwd_location()->garunteed_free())
+        {
+            (*new_cell_position) = 
+                cell(
+                    nullptr,
+                    nullptr,
+                    new_size + fwd_location()->size(),
+                    false,
+                    gc::heap::heap_struct::get()->gc_iteration());
+
+            new_cell_position->back_link_treadmill(back_treadmill());
+            new_cell_position->fwd_link_treadmill(fwd_treadmill()->fwd_treadmill());
+
+            gc::heap::cell* next_position = fwd_location()->fwd_location();
+            fwd_location()->unlink_treadmill();
+
+            new_cell_position->fwd_link_location(next_position);
+            new_cell_position->back_link_location(this);
+            _size = size_decrease;
+
+            return new_cell_position;
+        }
+        else
+        {
+            //Keep the memory allocated in the newly created cell
+
+            unlink_treadmill();
+            // _size += new_size;
+            return nullptr;
+        }
     }
-
-    new_cell_position->back_treadmill()->fwd_link_treadmill(new_cell_position);
-    new_cell_position->fwd_treadmill()->back_link_treadmill(new_cell_position);
-
-    return new_cell_position;
 }
 
 bool gc::heap::cell::mergable_with_back_treadmill()

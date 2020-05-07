@@ -28,10 +28,11 @@ namespace gc
             void fwd_link_location(gc::heap::cell* next_cell);
             void back_link_location(gc::heap::cell* prev_cell);
 
-            cell(size_t size, bool using_vtable_offset, char iteration);
+            cell(bool using_vtable_offset, char iteration);
             cell(gc::heap::cell* back_treadmill, gc::heap::cell* fwd_treadmill, size_t size, bool using_vtable_offset, char iteration);
 
             inline size_t size();
+            inline void set_size(size_t size);
 
             inline gc::heap::cell* back_treadmill();
             inline gc::heap::cell* fwd_treadmill();
@@ -61,6 +62,11 @@ namespace gc
 size_t gc::heap::cell::size()
 {
     return _size;
+}
+
+void gc::heap::cell::set_size(size_t size)
+{
+    _size = size;
 }
 
 gc::heap::cell* gc::heap::cell::back_treadmill()
