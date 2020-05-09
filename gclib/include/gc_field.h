@@ -17,11 +17,32 @@ namespace gc
 
             T* _object;
         public:
+            field():
+                _object(nullptr)
+            {
+            }
+
             field(T* object):
                 _object(object)
             {
                 ensure_gc_object(object);
                 if (object->current_mark() == 'I') gc::heap::heap_struct::get()->remove_from_initialization_list(object);
+            }
+
+            field(const field<T> &f2):
+                _object(f2._object)
+            {
+            }
+
+            field<T>& operator=(const field<T> &f2)
+            {
+                _object = f2._object;
+            }
+
+            field<T>& operator=(const T &o2)
+            {
+                _object = o2;
+                if (_object != nullptr && _object->current_mark() == 'I') gc::heap::heap_struct::get()->remove_from_initialization_list(_object);
             }
 
 	        T* operator->()
