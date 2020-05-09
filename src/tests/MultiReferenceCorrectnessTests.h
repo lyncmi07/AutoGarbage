@@ -19,10 +19,15 @@ namespace MultiReferenceCorrectnessTests
 
     struct B : public gc::object
     {
-        gc::field<A> _a;
+        gc::field<A> a;
         END_GC_FIELDS;
 
-        B(): _a(new A())
+        B(): a(new A())
+        {
+        }
+
+        B(gc::field<A>& a_original)
+            : a(a_original)
         {
         }
     };
@@ -47,7 +52,7 @@ namespace MultiReferenceCorrectnessTests
         }
     }
 
-    TEST(ShouldNotCollectWithTwoReferences)
+    TEST(ShouldNotCollectWithTwoReferencesStaticPtr)
     {
         gc::heap::heap_struct::init_gc(4096);
 
@@ -94,7 +99,58 @@ namespace MultiReferenceCorrectnessTests
         gc::heap::heap_struct::init_gc(4096);
 
         gc::static_ptr<B> ptr1 = new B();
+        gc::static_ptr<B> ptr2;
+
+        ptr2 = ptr1.debug_object();
         ASSERT_TOP(ptr1.debug_object());
+    }
+
+    TEST(ShouldNotCollectWithTwoReferencesField)
+    {
+        gc::heap::heap_struct::init_gc(4096);
+
+        gc::static_ptr<B> ptr1 = new B();
+        gc::static_ptr<B> ptr2 = new B();
+
+        ptr2->a = ptr1->a;
+        ASSERT_TOP(ptr2.debug_object()->a.debug_object());
+        ASSERT_EQUALS(ptr1.debug_object()->a.debug_object(), ptr2.debug_object()->a.debug_object());
+    }
+
+    TEST(ShouldNotAffectObjectOnCopyConstructionField)
+    {
+        gc::heap::heap_struct::init_gc(4096);
+
+        gc::static_ptr<B> ptr1(new B());
+        ASSERT_SCAN(ptr1.debug_object()->a.debug_object());
+
+        gc::static_ptr<B> ptr2(new B(ptr1->a));
+        ASSERT_TOP(ptr1.debug_object()->a.debug_object());
+        ASSERT_EQUALS(ptr1.debug_object()->a.debug_object(), ptr2.debug_object()->a.debug_object());
+    }
+
+    TEST(ShouldNotAffectObjectOnOperatorEqualField)
+    {
+        gc::heap::heap_struct::init_gc(4096);
+
+        gc::static_ptr<B> ptr1(new B());
+        gc::static_ptr<B> ptr2(new B());
+
+        ptr2->a = ptr1->a;
+        ASSERT_BOTTOM(ptr2.debug_object());
+        ASSERT_EQUALS(ptr1.debug_object()->a.debug_object(), ptr2.debug_object()->a.debug_object());
+    }
+
+    TEST(ShouldNotAffectObjectOnOperatorEqualObjectToField)
+    {
+        gc::heap::heap_struct::init_gc(4096);
+
+        gc::static_ptr<B> ptr1(new B());
+        gc::static_ptr<B> ptr2(new B());
+
+        ptr2->a = ptr1->a.debug_object();
+        ASSERT_BOTTOM(ptr2.debug_object());
+        ASSERT_EQUALS(ptr1.debug_object()->a.debug_object(), ptr2.debug_object()->a.debug_object());
     }
 
 int run_tests()
@@ -102,10 +158,14 @@ int run_tests()
     using namespace MultiReferenceCorrectnessTests;
 
     RUN_TEST(ShouldNotCollectDoubleReferencedObject);
-    RUN_TEST(ShouldNotCollectWithTwoReferences);
+    RUN_TEST(ShouldNotCollectWithTwoReferencesStaticPtr);
     RUN_TEST(ShouldNotAffectObjectOnCopyConstructionStaticPtr);
     RUN_TEST(ShouldNotAffectObjectOnOperatorEqualStaticPtr)
     RUN_TEST(ShouldNotAffectObjectOnOperatorEqualObjectToStaticPtr)
+    RUN_TEST(ShouldNotCollectWithTwoReferencesField)
+    RUN_TEST(ShouldNotAffectObjectOnCopyConstructionField)
+    RUN_TEST(ShouldNotAffectObjectOnOperatorEqualField)
+    RUN_TEST(ShouldNotAffectObjectOnOperatorEqualObjectToField)
 }
 }
 

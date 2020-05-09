@@ -46,7 +46,7 @@ namespace gc
                 return *this;
             }
 
-            gc::static_ptr<T>& operator=(const T* object)
+            gc::static_ptr<T>& operator=(T* object)
             {
                 _object = object;
                 return *this;
