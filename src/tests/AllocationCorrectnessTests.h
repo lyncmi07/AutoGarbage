@@ -56,6 +56,8 @@ int run_tests()
 
     RUN_TEST(StaticPtrAllocationObjectIsInTopList);
     RUN_TEST(StandardAllocationObjectIsInScanList);
+
+    TEST_SUCCESS;
 }
 
 }

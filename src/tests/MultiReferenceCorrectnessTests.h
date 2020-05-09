@@ -50,6 +50,8 @@ namespace MultiReferenceCorrectnessTests
             gc::heap::heap_struct::get()->collect_garbage();
             ASSERT_TOP(b);
         }
+
+        TEST_SUCCESS;
     }
 
     TEST(ShouldNotCollectWithTwoReferencesStaticPtr)
@@ -66,6 +68,8 @@ namespace MultiReferenceCorrectnessTests
 
         gc::heap::heap_struct::get()->collect_garbage();
         ASSERT_BOTTOM(b);
+
+        TEST_SUCCESS;
     }
 
     TEST(ShouldNotAffectObjectOnCopyConstructionStaticPtr)
@@ -79,6 +83,8 @@ namespace MultiReferenceCorrectnessTests
         ASSERT_BOTTOM(ptr1.debug_object());
         ASSERT_BOTTOM(ptr2.debug_object());
         ASSERT_EQUALS(ptr1.debug_object(), ptr2.debug_object());
+
+        TEST_SUCCESS;
     }
 
     TEST(ShouldNotAffectObjectOnOperatorEqualStaticPtr)
@@ -92,6 +98,8 @@ namespace MultiReferenceCorrectnessTests
         ASSERT_TOP(ptr1.debug_object());
         ASSERT_TOP(ptr2.debug_object()); // Adding to another ptr will cause gc_mark to be called moving the object to bottom
         ASSERT_EQUALS(ptr1.debug_object(), ptr2.debug_object());
+
+        TEST_SUCCESS;
     }
 
     TEST(ShouldNotAffectObjectOnOperatorEqualObjectToStaticPtr)
@@ -103,6 +111,8 @@ namespace MultiReferenceCorrectnessTests
 
         ptr2 = ptr1.debug_object();
         ASSERT_TOP(ptr1.debug_object());
+
+        TEST_SUCCESS;
     }
 
     TEST(ShouldNotCollectWithTwoReferencesField)
@@ -115,6 +125,8 @@ namespace MultiReferenceCorrectnessTests
         ptr2->a = ptr1->a;
         ASSERT_TOP(ptr2.debug_object()->a.debug_object());
         ASSERT_EQUALS(ptr1.debug_object()->a.debug_object(), ptr2.debug_object()->a.debug_object());
+
+        TEST_SUCCESS;
     }
 
     TEST(ShouldNotAffectObjectOnCopyConstructionField)
@@ -127,6 +139,8 @@ namespace MultiReferenceCorrectnessTests
         gc::static_ptr<B> ptr2(new B(ptr1->a));
         ASSERT_TOP(ptr1.debug_object()->a.debug_object());
         ASSERT_EQUALS(ptr1.debug_object()->a.debug_object(), ptr2.debug_object()->a.debug_object());
+
+        TEST_SUCCESS;
     }
 
     TEST(ShouldNotAffectObjectOnOperatorEqualField)
@@ -139,6 +153,8 @@ namespace MultiReferenceCorrectnessTests
         ptr2->a = ptr1->a;
         ASSERT_BOTTOM(ptr2.debug_object());
         ASSERT_EQUALS(ptr1.debug_object()->a.debug_object(), ptr2.debug_object()->a.debug_object());
+
+        TEST_SUCCESS;
     }
 
     TEST(ShouldNotAffectObjectOnOperatorEqualObjectToField)
@@ -151,6 +167,8 @@ namespace MultiReferenceCorrectnessTests
         ptr2->a = ptr1->a.debug_object();
         ASSERT_BOTTOM(ptr2.debug_object());
         ASSERT_EQUALS(ptr1.debug_object()->a.debug_object(), ptr2.debug_object()->a.debug_object());
+
+        TEST_SUCCESS;
     }
 
 int run_tests()
@@ -166,6 +184,8 @@ int run_tests()
     RUN_TEST(ShouldNotAffectObjectOnCopyConstructionField)
     RUN_TEST(ShouldNotAffectObjectOnOperatorEqualField)
     RUN_TEST(ShouldNotAffectObjectOnOperatorEqualObjectToField)
+
+    TEST_SUCCESS;
 }
 }
 

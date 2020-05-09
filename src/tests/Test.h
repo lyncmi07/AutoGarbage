@@ -15,10 +15,10 @@
 #define RUN_TEST(func_name) if(func_name() == 1) { std::cout << #func_name << " failed." << std::endl; return 1; } else { std::cout << #func_name << " passed." << std::endl; }
 #define RUN_TEST_SUITE(func_name) if(func_name::run_tests() == 1) { std::cout << #func_name << " failed." << std::endl; return 1; } else { std::cout << #func_name << " suite passed." << std::endl; }
 
-#define ASSERT_BOTTOM(cell) { auto c = cell; if(assert_bottom(c) == 1) { std::cout << c << " is not in bottom list" << std::endl; return 1; } }
-#define ASSERT_TOP(cell) { auto c = cell; if(assert_top(c) == 1) { std::cout << c << " is not in top list" << std::endl; return 1; } }
-#define ASSERT_SCAN(cell) { auto c = cell; if(assert_scan(c) == 1) { std::cout << c << " is not in scan list" << std::endl; return 1; } }
-#define ASSERT_FREE(cell) { auto c = cell; if(assert_free(c) == 1) { std::cout << c << " is not in free list" << std::endl; return 1; } }
+#define ASSERT_BOTTOM(cell) { auto c = cell; if(assert_bottom(c) == 1) { std::cout << #cell << ":" << c << " is not in bottom list" << std::endl; return 1; } }
+#define ASSERT_TOP(cell) { auto c = cell; if(assert_top(c) == 1) { std::cout << #cell << ":" << c << " is not in top list" << std::endl; return 1; } }
+#define ASSERT_SCAN(cell) { auto c = cell; if(assert_scan(c) == 1) { std::cout << #cell << ":" << c << " is not in scan list" << std::endl; return 1; } }
+#define ASSERT_FREE(cell) { auto c = cell; if(assert_free(c) == 1) { std::cout << #cell << ":" << c << " is not in free list" << std::endl; return 1; } }
 
 #define ASSERT_EQUALS(a, b) { if (a != b) { std::cout << a << " is not equal to " << b << std::endl; return 1; } }
 

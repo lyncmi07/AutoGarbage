@@ -2,6 +2,7 @@
 #include "FlipCorrectnessTests.h"
 #include "AllocationCorrectnessTests.h"
 #include "MultiReferenceCorrectnessTests.h"
+#include "ReferenceChangeFlipCorrectnessTests.h"
 
 int main()
 {
@@ -9,6 +10,9 @@ int main()
     RUN_TEST_SUITE(AllocationCorrectnessTests);
     RUN_TEST_SUITE(FlipCorrectnessTests);
     RUN_TEST_SUITE(MultiReferenceCorrectnessTests);
+    RUN_TEST_SUITE(ReferenceChangeFlipCorrectnessTests);
+
+    TEST_SUCCESS;
 }
 
 void debug()
