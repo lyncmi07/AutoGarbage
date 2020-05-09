@@ -4,8 +4,9 @@
 #include <iostream>
 
 #include "gc_statics.h"
-#include "gc_field.h"
 #include "gc_cell.h"
+
+#define END_GC_FIELDS bool _gc_fields_end; bool* gc_fields_end() override { return &_gc_fields_end; };
 
 namespace gc
 {
@@ -20,7 +21,7 @@ namespace gc
             void gc_black();
             void gc_grey_fields();
 
-	    virtual bool* gc_fields_end();
+	        virtual bool* gc_fields_end();
         public:
 
             object();
@@ -29,7 +30,7 @@ namespace gc
 
             char current_mark();
 
-	        void gc_mark();
+	        virtual void gc_mark();
 
 	        void debug_fields();
 	        void debug_gc();

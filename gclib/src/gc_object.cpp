@@ -1,6 +1,7 @@
 #include "gc_object.h"
 #include "gc_cell.h"
 #include "gc_heap.h"
+#include "gc_field.h"
 
 void gc::object::gc_ecru()
 {
