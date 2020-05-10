@@ -71,7 +71,11 @@ int main()
             // gc::heap::heap_struct::get()->print_gc_info();
             // gc::heap::heap_struct::get()->print_gc_debug();
         }
+
     }
+
+    std::cout << std::endl;
+    gc::heap::heap_struct::get()->print_gc_info();
 }
 
 void debug()
