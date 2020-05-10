@@ -29,7 +29,8 @@ void gc::object::gc_grey_fields()
     //Move to the end of gc::object to get to memory formed by extended class
     gc::field<gc::object>* field_ptr = (gc::field<gc::object>*) (((unsigned long) this) + sizeof(gc::object));
 
-    while (*((void**)field_ptr) != heap::heap_struct::get()->end_gc_fields_magic_ptr())
+    // while (*((void**)field_ptr) > heap::heap_struct::get()->end_gc_fields_magic_ptr())
+    while(field_ptr->holds_valid_object())
     {
         field_ptr->gc_mark();
 	    field_ptr = (gc::field<gc::object>*) (((unsigned long) field_ptr) + sizeof(gc::field<gc::object>));

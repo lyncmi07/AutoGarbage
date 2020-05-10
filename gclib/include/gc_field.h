@@ -84,6 +84,11 @@ namespace gc
 	        {
 		        if (_object != nullptr) _object->gc_mark();
 	        }
+
+            inline bool holds_valid_object()
+            {
+                return _object != nullptr;
+            }
     };
 }
 #endif

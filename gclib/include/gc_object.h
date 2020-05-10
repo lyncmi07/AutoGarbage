@@ -7,7 +7,7 @@
 #include "gc_cell.h"
 
 // #define END_GC_FIELDS bool _gc_fields_end; bool* gc_fields_end() override { return &_gc_fields_end; };
-#define END_GC_FIELDS void* _end_gc_fields_magic_ptr = gc::heap::heap_struct::get()->end_gc_fields_magic_ptr();
+#define END_GC_FIELDS void* _end_gc_fields_magic_ptr = nullptr; bool* gc_fields_end() override { return ((bool*)&_end_gc_fields_magic_ptr); };
 
 namespace gc
 {
