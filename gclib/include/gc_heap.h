@@ -28,7 +28,9 @@ namespace heap
             static gc::heap::heap_struct* INSTANCE;
 
             size_t _heap_size;
+
             void* _heap_space;
+            void* _end_gc_fields_magic_ptr;
 
             unsigned int _garbage_collection_cycle;
 
@@ -82,6 +84,8 @@ namespace heap
             gc::heap::cell* free();
 
 
+            inline void* end_gc_fields_magic_ptr();
+
             inline char gc_iteration();
 
             void add_static(void* sptr);
@@ -120,6 +124,11 @@ gc::static_ptr<gc::object>* gc::heap::heap_struct::static_objects_start_ptr()
 gc::object* gc::heap::heap_struct::initialization_objects_start_ptr()
 {
     return _initialization_objects_start_ptr;
+}
+
+void* gc::heap::heap_struct::end_gc_fields_magic_ptr()
+{
+    return _end_gc_fields_magic_ptr;
 }
 
 char gc::heap::heap_struct::gc_iteration()

@@ -63,13 +63,13 @@ int main()
     gc::heap::heap_struct::init_gc(1000);
 
     int i = 0;
-    /*while(true)
+    while(true)
     {
         gc::static_ptr<B> b(new B());
         gc::heap::heap_struct::get()->print_gc_debug();
         // std::cout << "loop:" << i++ << " ";
         // gc::heap::heap_struct::get()->print_gc_info();
-    }*/
+    }
 
     // gc::static_ptr<B> b(new B());
     // b->_a = new A(2);
@@ -78,7 +78,7 @@ int main()
     // gc::static_ptr<C> c2(new C());
     // gc::static_ptr<C> c3(new C());
 
-    c->_array[0] = new A(15);
+    /*c->_array[0] = new A(15);
 
     for (int i = 0; i < 3; i++)
     {
@@ -88,7 +88,7 @@ int main()
     for (int i = 0; i < 3; i++)
     {
         std::cout << c->_array[i]->i() << std::endl;
-    }
+    }*/
 
     return 0;
 }

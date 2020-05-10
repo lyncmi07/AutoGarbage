@@ -16,6 +16,7 @@ gc::heap::fragment_memory::fragment_memory(void* _fragment_position, size_t _siz
 gc::heap::heap_struct::heap_struct(size_t heap_size):
     _heap_size(heap_size),
     _heap_space((void*) new char[_heap_size]),
+    _end_gc_fields_magic_ptr(((char*)_heap_space) - 1),
     _bottom(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),
     _top(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),
     _scan(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),

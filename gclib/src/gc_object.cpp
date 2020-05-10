@@ -26,13 +26,13 @@ void gc::object::gc_black()
 
 void gc::object::gc_grey_fields()
 {
+    //Move to the end of gc::object to get to memory formed by extended class
     gc::field<gc::object>* field_ptr = (gc::field<gc::object>*) (((unsigned long) this) + sizeof(gc::object));
-    bool* fields_end_ptr = gc_fields_end();
 
-    while ((bool*)field_ptr < fields_end_ptr)
+    while (*((void**)field_ptr) != heap::heap_struct::get()->end_gc_fields_magic_ptr())
     {
         field_ptr->gc_mark();
-	field_ptr = (gc::field<gc::object>*) (((unsigned long) field_ptr) + sizeof(gc::field<gc::object>));
+	    field_ptr = (gc::field<gc::object>*) (((unsigned long) field_ptr) + sizeof(gc::field<gc::object>));
     }
 }
 
