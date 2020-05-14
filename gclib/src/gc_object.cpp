@@ -1,3 +1,4 @@
+#include "gc_scoped_timer.h"
 #include "gc_object.h"
 #include "gc_cell.h"
 #include "gc_heap.h"
@@ -26,6 +27,10 @@ void gc::object::gc_black()
 
 void gc::object::gc_grey_fields()
 {
+    #if (PERFORMANCE_TIMERS)
+        scoped_timer t(timer_group::TIMER_GREY_MARKING);
+    #endif
+
     gc::field<gc::object>* field_ptr = (gc::field<gc::object>*) (((unsigned long) this) + sizeof(gc::object));
     bool* fields_end_ptr = gc_fields_end();
 

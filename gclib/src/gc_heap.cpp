@@ -1,5 +1,6 @@
 #include "gc_heap.h"
 
+#include "gc_scoped_timer.h"
 #include "gc_static_ptr.h"
 #include "gc_object.h"
 #include "gc_cell.h"
@@ -50,6 +51,10 @@ gc::heap::heap_struct::~heap_struct()
 
 gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
 {
+    #if (PERFORMANCE_TIMERS)
+        scoped_timer t(timer_group::TIMER_ATTEMPT_ALLOCATE);
+    #endif
+
     gc::heap::cell* next_free_cell = free();
     gc::heap::cell* current_largest_cell = free();
 
@@ -132,6 +137,10 @@ void gc::heap::heap_struct::remove_from_initialization_list(gc::object* object)
 
 void* gc::heap::heap_struct::malloc(size_t size)
 {
+    #if (PERFORMANCE_TIMERS)
+        scoped_timer t(timer_group::TIMER_MALLOC);
+    #endif
+
     gc::heap::cell* allocation_current_cell = attempt_allocate(size);
     if (allocation_current_cell != nullptr) goto return_allocation;
 
@@ -342,6 +351,10 @@ void gc::heap::heap_struct::flip()
 
 void gc::heap::heap_struct::collect_garbage()
 {
+    #if (PERFORMANCE_TIMERS)
+        scoped_timer t(timer_group::TIMER_COLLECT_GARBAGE);
+    #endif
+
     _garbage_collection_cycle++;
     ungrey_all();
     flip();

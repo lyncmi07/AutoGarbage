@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <time.h>
 
+#include "gc_scoped_timer.h"
 #include "gc.h"
 
 class Timer
@@ -52,6 +53,10 @@ public:
 
 int main()
 {
+    #if (PERFORMANCE_TIMERS)
+        scoped_timer::init_timers();
+    #endif
+
     //initialise random
     // srand(time(NULL));
     srand(23102);
@@ -65,7 +70,6 @@ int main()
         for(unsigned long i = 0; i < 1000000; i++)
         {
             {
-                // Timer singleAllocationTimer("Single allocation", 1.0);
                 gc::static_ptr<RandomSizeObject> rso(new RandomSizeObject());
             }
             // gc::heap::heap_struct::get()->print_gc_info();
@@ -76,6 +80,10 @@ int main()
 
     std::cout << std::endl;
     gc::heap::heap_struct::get()->print_gc_info();
+
+    #if (PERFORMANCE_TIMERS)
+        scoped_timer::print_info();
+    #endif
 }
 
 void debug()
