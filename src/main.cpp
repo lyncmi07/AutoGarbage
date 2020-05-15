@@ -1,5 +1,9 @@
 #include <iostream>
 
+#if defined(PERFORMANCE_TIMERS)
+#include "gc_scoped_timer.h"
+#endif
+
 #include "gc.h"
 #include "gc_heap.h"
 
@@ -60,6 +64,11 @@ class C : public gc::object
 int main()
 {
     // gc::heap::heap_struct::init_gc(2000);
+
+    #if (PERFORMANCE_TIMERS)
+        scoped_timer::init_timers();
+    #endif
+
     gc::heap::heap_struct::init_gc(1000);
 
     int i = 0;
@@ -89,6 +98,10 @@ int main()
     {
         std::cout << c->_array[i]->i() << std::endl;
     }*/
+
+    #if (PERFORMANCE_TIMERS)
+        scoped_timer::print_info();
+    #endif
 
     return 0;
 }

@@ -7,6 +7,8 @@ CCFLAGS=-Wall -std=c++17 -Igclib/include -g
 LIB_SOURCES=$(wildcard gclib/src/*.cpp)
 LIB_OBJECTS=$(addprefix gclib/obj/, $(notdir $(LIB_SOURCES:.cpp=.o)))
 
+CCFLAGS += -DPERFORMANCE_TIMERS
+
 TARGET=a.out
 
 all=$(TARGET)
