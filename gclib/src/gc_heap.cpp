@@ -81,18 +81,6 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
         {
             //Cell is not large enough. Can it be merged with the next cell?
 
-            /*if (next_free_cell->mergable_with_fwd_treadmill())
-            {
-                //Merge cells and try again
-                next_free_cell->merge_with_fwd_treadmill();
-
-            }
-            else
-            {
-                //Unable to merge cells, try next cell
-                next_free_cell = next_free_cell->fwd_treadmill();
-            }*/
-
             if (next_free_cell->fwd_location() != nullptr && next_free_cell->fwd_location()->garunteed_free() && next_free_cell->mergable_with_fwd_location())
             {
                 //Merge cells and try again
