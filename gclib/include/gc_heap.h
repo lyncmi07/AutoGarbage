@@ -32,6 +32,8 @@ namespace heap
             void* _heap_space;
             void* _end_gc_fields_magic_ptr;
 
+            unsigned long _total_bytes_allocated;
+
             unsigned int _garbage_collection_cycle;
 
             gc::heap::cell *const _bottom;
