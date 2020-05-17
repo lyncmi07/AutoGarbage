@@ -30,6 +30,8 @@ namespace heap
             size_t _heap_size;
             void* _heap_space;
 
+            unsigned long _total_bytes_allocated;
+
             unsigned int _garbage_collection_cycle;
 
             gc::heap::cell *const _bottom;

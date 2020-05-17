@@ -17,6 +17,7 @@ gc::heap::fragment_memory::fragment_memory(void* _fragment_position, size_t _siz
 gc::heap::heap_struct::heap_struct(size_t heap_size):
     _heap_size(heap_size),
     _heap_space((void*) new char[_heap_size]),
+    _total_bytes_allocated(0),
     _bottom(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),
     _top(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),
     _scan(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),
@@ -55,6 +56,7 @@ gc::heap::heap_struct::~heap_struct()
 gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
 {
     #if (PERFORMANCE_TIMERS)
+        _total_bytes_allocated += size;
         scoped_timer t(timer_group::TIMER_ATTEMPT_ALLOCATE);
     #endif
 
@@ -223,7 +225,14 @@ void gc::heap::heap_struct::print_gc_debug()
 
 void gc::heap::heap_struct::print_gc_info()
 {
-    std::cout << "gc_cycle:" << _garbage_collection_cycle << " lost_cells:" << _fragment_memory_list.size() << " lost_size:" << _fragment_size << std::endl;
+    std::cout
+        << "gc_cycle:" << _garbage_collection_cycle
+        << " lost_cells:" << _fragment_memory_list.size()
+        << " lost_size:" << _fragment_size
+        #if (PERFORMANCE_TIMERS)
+        << " total_bytes_allocated:" << _total_bytes_allocated
+        #endif
+        << std::endl;
 }
 
 void gc::heap::heap_struct::print_initialization_objects_list()
