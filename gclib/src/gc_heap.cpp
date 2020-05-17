@@ -14,8 +14,9 @@ gc::heap::fragment_memory::fragment_memory(void* _fragment_position, size_t _siz
 {
 }
 
-gc::heap::heap_struct::heap_struct(size_t heap_size):
+gc::heap::heap_struct::heap_struct(size_t heap_size, unsigned int max_allocation_attempts_before_gc):
     _heap_size(heap_size),
+    _max_allocation_attempts_before_gc(max_allocation_attempts_before_gc),
     _heap_space((void*) new char[_heap_size]),
     _total_bytes_allocated(0),
     _bottom(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),
@@ -63,7 +64,7 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
     gc::heap::cell* next_free_cell = free();
     gc::heap::cell* current_largest_cell = free();
 
-    while(next_free_cell != _bottom)
+    for (unsigned int i = 0; i < _max_allocation_attempts_before_gc && next_free_cell != _bottom; i++)
     {
         #if (PERFORMANCE_TIMERS)
             scoped_timer t(timer_group::TIMER_ATTEMPT_ALLOCATE_LOOP);

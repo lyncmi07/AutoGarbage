@@ -27,7 +27,10 @@ namespace heap
         private:
             static gc::heap::heap_struct* INSTANCE;
 
+            // config values
             size_t _heap_size;
+            unsigned int _max_allocation_attempts_before_gc;
+
             void* _heap_space;
 
             unsigned long _total_bytes_allocated;
@@ -47,7 +50,7 @@ namespace heap
 
             char _gc_iteration;
 
-            heap_struct(size_t heap_size);
+            heap_struct(size_t heap_size, unsigned int max_allocation_attempts_before_gc);
             ~heap_struct();
 
 
@@ -63,10 +66,12 @@ namespace heap
         public:
             void* malloc(size_t size);
 
-            static void init_gc(unsigned int heap_size)
+            static void init_gc(
+                    size_t heap_size,
+                    unsigned int max_allocation_attempts_before_gc)
             {
                 if (gc::heap::heap_struct::INSTANCE != nullptr) delete gc::heap::heap_struct::INSTANCE;
-                gc::heap::heap_struct::INSTANCE = new heap_struct(heap_size);
+                gc::heap::heap_struct::INSTANCE = new heap_struct(heap_size, max_allocation_attempts_before_gc);
             }
 
             inline static gc::heap::heap_struct* get()
