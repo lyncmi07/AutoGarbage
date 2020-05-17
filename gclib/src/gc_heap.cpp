@@ -22,6 +22,9 @@ gc::heap::heap_struct::heap_struct(size_t heap_size):
     _scan(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),
     _free(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),
     _static_objects_start_ptr(nullptr),
+    _initialization_objects_start_ptr(nullptr),
+    _fragment_memory_list(),
+    _fragment_size(0),
     _gc_iteration(0)
 {
     gc::heap::cell* initial_free_cell = (gc::heap::cell*) _heap_space;
