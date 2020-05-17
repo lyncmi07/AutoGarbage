@@ -63,6 +63,10 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
 
     while(next_free_cell != _bottom)
     {
+        #if (PERFORMANCE_TIMERS)
+            scoped_timer t(timer_group::TIMER_ATTEMPT_ALLOCATE_LOOP);
+        #endif
+
         if (next_free_cell->size() > size)
         {
             gc::heap::cell* resized_cell = next_free_cell->resize(size);

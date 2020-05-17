@@ -1,5 +1,6 @@
 #include "gc_cell.h"
 #include "gc_heap.h"
+#include "gc_scoped_timer.h"
 
 #include <exception>
 
@@ -68,6 +69,10 @@ void* gc::heap::cell::actual_position()
 
 gc::heap::cell* gc::heap::cell::resize(size_t size_decrease)
 {
+    #if (PERFORMANCE_TIMERS)
+        scoped_timer t(timer_group::TIMER_CELL_RESIZE);
+    #endif
+
     if (size_decrease >= size()) throw std::bad_alloc();
 
     size_t new_size = size() - size_decrease;

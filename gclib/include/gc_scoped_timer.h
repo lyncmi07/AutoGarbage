@@ -1,10 +1,24 @@
 #ifndef GC_LIB_SCOPED_TIMER
 #define GC_LIB_SCOPED_TIMER
 
+
 #include <iostream>
 #include <chrono>
 #include <string>
 #include <cstring>
+
+/*
+ * Example Usage:
+ *
+ * scoped_timer::init_timers();
+ * {
+ *     scoped_timer t(timer_group::A)
+ *     std::cout << "Hello World!" << std::endl;
+ * }
+ *
+ * scoped_timer::print_info();
+ *
+ */
 
 #define TIMER_GROUP(group_names...) enum timer_group { group_names, size }; \
     static std::string merged_timer_group_names = #group_names;
@@ -24,6 +38,7 @@ class scoped_timer
 {
     private:
 
+    inline static const double TIMER_OVERHEAD = 17.7669; //Expected overhead of 17.7669 nanoseconds
     inline static std::string* timer_group_names;
     inline static long* group_total_time;
     inline static long* group_call_counter;
@@ -82,8 +97,10 @@ class scoped_timer
         for (unsigned int i = 0; i < timer_group::size; i++)
         {
             double average_time = (scoped_timer::group_total_time[i] * 1.0) / scoped_timer::group_call_counter[i];
+            average_time -= TIMER_OVERHEAD;
             std::cout << scoped_timer::timer_group_names[i]
                 << ": avg:" << average_time
+                << " total_time:" << scoped_timer::group_total_time[i] 
                 << " total_calls:" << scoped_timer::group_call_counter[i] << std::endl;
         }
     }
