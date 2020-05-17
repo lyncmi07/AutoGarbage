@@ -1,5 +1,6 @@
 #include "gc_heap.h"
 
+#include "gc_scoped_timer.h"
 #include "gc_static_ptr.h"
 #include "gc_object.h"
 #include "gc_cell.h"
@@ -22,6 +23,9 @@ gc::heap::heap_struct::heap_struct(size_t heap_size):
     _scan(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),
     _free(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),
     _static_objects_start_ptr(nullptr),
+    _initialization_objects_start_ptr(nullptr),
+    _fragment_memory_list(),
+    _fragment_size(0),
     _gc_iteration(0)
 {
     gc::heap::cell* initial_free_cell = (gc::heap::cell*) _heap_space;
@@ -51,11 +55,19 @@ gc::heap::heap_struct::~heap_struct()
 
 gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
 {
+    #if (PERFORMANCE_TIMERS)
+        scoped_timer t(timer_group::TIMER_ATTEMPT_ALLOCATE);
+    #endif
+
     gc::heap::cell* next_free_cell = free();
     gc::heap::cell* current_largest_cell = free();
 
     while(next_free_cell != _bottom)
     {
+        #if (PERFORMANCE_TIMERS)
+            scoped_timer t(timer_group::TIMER_ATTEMPT_ALLOCATE_LOOP);
+        #endif
+
         if (next_free_cell->size() > size)
         {
             gc::heap::cell* resized_cell = next_free_cell->resize(size);
@@ -75,18 +87,6 @@ gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
         else
         {
             //Cell is not large enough. Can it be merged with the next cell?
-
-            /*if (next_free_cell->mergable_with_fwd_treadmill())
-            {
-                //Merge cells and try again
-                next_free_cell->merge_with_fwd_treadmill();
-
-            }
-            else
-            {
-                //Unable to merge cells, try next cell
-                next_free_cell = next_free_cell->fwd_treadmill();
-            }*/
 
             if (next_free_cell->fwd_location() != nullptr && next_free_cell->fwd_location()->garunteed_free() && next_free_cell->mergable_with_fwd_location())
             {
@@ -133,6 +133,10 @@ void gc::heap::heap_struct::remove_from_initialization_list(gc::object* object)
 
 void* gc::heap::heap_struct::malloc(size_t size)
 {
+    #if (PERFORMANCE_TIMERS)
+        scoped_timer t(timer_group::TIMER_MALLOC);
+    #endif
+
     gc::heap::cell* allocation_current_cell = attempt_allocate(size);
     if (allocation_current_cell != nullptr) goto return_allocation;
 
@@ -343,6 +347,10 @@ void gc::heap::heap_struct::flip()
 
 void gc::heap::heap_struct::collect_garbage()
 {
+    #if (PERFORMANCE_TIMERS)
+        scoped_timer t(timer_group::TIMER_COLLECT_GARBAGE);
+    #endif
+
     _garbage_collection_cycle++;
     ungrey_all();
     flip();
