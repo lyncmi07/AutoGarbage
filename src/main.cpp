@@ -52,11 +52,11 @@ class B : public gc::object
 class C : public gc::object
 {
     public:
-    gc::field<gc::array<A, 3>> _array;
+    gc::field<gc::dyn_array<A>> _array;
     END_GC_FIELDS;
 
     public:
-        C(): _array()
+        C(size_t size): _array(new gc::dyn_array<A>(size))
         {
         }
 };
@@ -69,35 +69,29 @@ int main()
         scoped_timer::init_timers();
     #endif
 
-    gc::heap::heap_struct::init_gc(1000);
+    gc::heap::heap_struct::init_gc(10000, 25);
 
-    int i = 0;
+    /*int i = 0;
     while(true)
     {
         gc::static_ptr<B> b(new B());
         gc::heap::heap_struct::get()->print_gc_debug();
         // std::cout << "loop:" << i++ << " ";
         // gc::heap::heap_struct::get()->print_gc_info();
-    }
-
-    // gc::static_ptr<B> b(new B());
-    // b->_a = new A(2);
-
-    gc::static_ptr<C> c(new C());
-    // gc::static_ptr<C> c2(new C());
-    // gc::static_ptr<C> c3(new C());
-
-    /*c->_array[0] = new A(15);
-
-    for (int i = 0; i < 3; i++)
-    {
-        c->_array[i] = new A(i+10);
-    }
-
-    for (int i = 0; i < 3; i++)
-    {
-        std::cout << c->_array[i]->i() << std::endl;
     }*/
+
+
+    gc::static_ptr<C> c(new C(10));
+
+    c->_array[0] = new A(10);
+    std::cout << c->_array[0]->i() << std::endl;
+    c->_array[0] = new A(9);
+    c->_array[10] = new A(9);
+
+    std::cout << c->_array[1]->i() << std::endl;
+    std::cout << c->_array[0]->i() << std::endl;
+
+    gc::heap::heap_struct::get()->print_gc_debug();
 
     #if (PERFORMANCE_TIMERS)
         scoped_timer::print_info();
@@ -109,4 +103,19 @@ int main()
 void debug()
 {
     gc::heap::heap_struct::get()->print_gc_debug();
+}
+
+void dump_memory(void* position, int start, int end)
+{
+    
+    char* char_position = (char*) position;
+
+    unsigned int lineSeparation = 8;
+    for (unsigned int i = 0; i < (end - start); i++)
+    {
+        if (i % lineSeparation == 0) printf("\n");
+        printf("%02hhx ", (int)char_position[start + i]);
+    }
+
+    std::cout << std::endl;
 }

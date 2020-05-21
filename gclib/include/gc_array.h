@@ -23,6 +23,7 @@ namespace gc
 
             gc::field<T>& operator[](int i)
             {
+                gc_mark();
                 return _array[i];
             }
     };
