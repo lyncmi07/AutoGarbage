@@ -32,7 +32,7 @@ struct B : public gc::object
 
 TEST(StaticPtrAllocationObjectIsInTopList)
 {
-    gc::heap::heap_struct::init_gc(4096);
+    gc::heap::heap_struct::init_gc(4096, 25);
 
     gc::static_ptr<A> a(new A());
     ASSERT_TOP(a.debug_object());
@@ -42,7 +42,7 @@ TEST(StaticPtrAllocationObjectIsInTopList)
 
 TEST(StandardAllocationObjectIsInScanList)
 {
-    gc::heap::heap_struct::init_gc(4096);
+    gc::heap::heap_struct::init_gc(4096, 25);
 
     gc::static_ptr<B> b(new B());
     ASSERT_SCAN(b.debug_object()->_a.debug_object());
