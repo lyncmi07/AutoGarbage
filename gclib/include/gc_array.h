@@ -3,6 +3,7 @@
 
 #include "gc_heap.h"
 #include "gc_dyn_array_impl.h"
+#include "gc_object.h"
 
 namespace gc
 {
