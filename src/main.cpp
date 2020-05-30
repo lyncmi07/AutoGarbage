@@ -63,13 +63,11 @@ class C : public gc::object
 
 int main()
 {
-    // gc::heap::heap_struct::init_gc(2000);
-
     #if (PERFORMANCE_TIMERS)
         scoped_timer::init_timers();
     #endif
 
-    gc::heap::heap_struct::init_gc(10000, 25);
+    gc::init(10000, 25);
 
     /*int i = 0;
     while(true)

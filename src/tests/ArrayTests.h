@@ -21,7 +21,7 @@ struct A : public gc::object
 
 TEST(ReferencedArrayIsNotCollected)
 {
-    gc::heap::heap_struct::init_gc(4096, 25);
+    gc::init(4096, 25);
 
     gc::static_ptr<gc::dyn_array<A>> arr(new gc::dyn_array<A>(3));
 
@@ -33,7 +33,7 @@ TEST(ReferencedArrayIsNotCollected)
 
 TEST(ObjectsInArrayNotCollected)
 {
-    gc::heap::heap_struct::init_gc(4096, 25);
+    gc::init(4096, 25);
 
     A* a0ptr;
     A* a1ptr;
@@ -65,7 +65,7 @@ TEST(ObjectsInArrayNotCollected)
 
 TEST(IndexSpacedObjectsInArrayNotCollected)
 {
-    gc::heap::heap_struct::init_gc(4096, 25);
+    gc::init(4096, 25);
 
     A* a0ptr;
     A* a2ptr;
@@ -92,7 +92,7 @@ TEST(IndexSpacedObjectsInArrayNotCollected)
 
 TEST(UnassignedElementCollectedNewElementNotCollected)
 {
-    gc::heap::heap_struct::init_gc(4096, 25);
+    gc::init(4096, 25);
 
     A* originalObj;
     A* newObj;
@@ -127,7 +127,7 @@ TEST(UnassignedElementCollectedNewElementNotCollected)
 
 TEST(MultiDimentionalElementsNotCollected)
 {
-    gc::heap::heap_struct::init_gc(4096, 25);
+    gc::init(4096, 25);
 
     gc::static_ptr<gc::dyn_array<gc::dyn_array<A>>> arr(new gc::dyn_array<gc::dyn_array<A>>(2));
 

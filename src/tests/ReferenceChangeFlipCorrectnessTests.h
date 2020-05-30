@@ -30,7 +30,7 @@ namespace ReferenceChangeFlipCorrectnessTests
 
     TEST(ShouldCollectNoLongerReferencedObjectStaticPtr)
     {
-        gc::heap::heap_struct::init_gc(4096, 25);
+        gc::init(4096, 25);
 
         gc::static_ptr<B> ptr1(new B());
         B* b1 = ptr1.debug_object();
@@ -55,7 +55,7 @@ namespace ReferenceChangeFlipCorrectnessTests
 
     TEST(ShouldCollectNoLongerReferencedObjectField)
     {
-        gc::heap::heap_struct::init_gc(4096, 25);
+        gc::init(4096, 25);
 
         gc::static_ptr<B> ptr1(new B());
 

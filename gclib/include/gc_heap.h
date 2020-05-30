@@ -8,6 +8,9 @@ namespace gc
 {
     template<class T> class static_ptr;
     class object;
+    void init(size_t heap_size, unsigned int max_allocation_attempts_before_gc);
+    void debug();
+    void info();
 
 namespace heap
 {
@@ -54,6 +57,13 @@ namespace heap
             heap_struct(size_t heap_size, unsigned int max_allocation_attempts_before_gc);
             ~heap_struct();
 
+            static void init_gc(
+                    size_t heap_size,
+                    unsigned int max_allocation_attempts_before_gc)
+            {
+                if (gc::heap::heap_struct::INSTANCE != nullptr) delete gc::heap::heap_struct::INSTANCE;
+                gc::heap::heap_struct::INSTANCE = new heap_struct(heap_size, max_allocation_attempts_before_gc);
+            }
 
             void flip_list(); 
             void ungrey_all();
@@ -66,14 +76,6 @@ namespace heap
             gc::heap::cell* attempt_allocate(size_t size);
         public:
             void* malloc(size_t size);
-
-            static void init_gc(
-                    size_t heap_size,
-                    unsigned int max_allocation_attempts_before_gc)
-            {
-                if (gc::heap::heap_struct::INSTANCE != nullptr) delete gc::heap::heap_struct::INSTANCE;
-                gc::heap::heap_struct::INSTANCE = new heap_struct(heap_size, max_allocation_attempts_before_gc);
-            }
 
             inline static gc::heap::heap_struct* get()
             {
@@ -118,6 +120,10 @@ namespace heap
             void remove_from_initialization_list(gc::object* object);
 
             void add_fragment_memory(void* position, size_t size);
+
+            friend void gc::init(size_t heap_size, unsigned int max_allocation_attempts_before_gc);
+            friend void gc::debug();
+            friend void gc::info();
     };
 }}
 

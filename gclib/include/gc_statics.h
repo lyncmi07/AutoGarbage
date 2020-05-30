@@ -5,13 +5,9 @@
 
 namespace gc
 {
-    class object;
-    namespace heap
-    {
-        class free_cell;
-    }
-
-    extern unsigned int _current_grey_objects;
+    void init(size_t heap_size, unsigned int max_allocation_attempts_before_gc);
+    void debug();
+    void info();
 }
 
 #endif

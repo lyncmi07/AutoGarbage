@@ -32,7 +32,7 @@ struct B : public gc::object
 TEST(FlipBottomStandardObjectBecomesScan)
 {
 
-    gc::heap::heap_struct::init_gc(4096, 25);
+    gc::init(4096, 25);
 
     gc::static_ptr<B> b(new B());
     b->_a->val;
@@ -48,7 +48,7 @@ TEST(FlipBottomStandardObjectBecomesScan)
 
 TEST(FlipBottomStaticObjectBecomesTop)
 {
-    gc::heap::heap_struct::init_gc(4096, 25);
+    gc::init(4096, 25);
 
     gc::static_ptr<B> b(new B());
     b->_a;
@@ -63,7 +63,7 @@ TEST(FlipBottomStaticObjectBecomesTop)
 
 TEST(FlipAccessStaticObjectBecomesBottom)
 {
-    gc::heap::heap_struct::init_gc(4096, 25);
+    gc::init(4096, 25);
 
     gc::static_ptr<B> b(new B());
     b->_a;
@@ -80,7 +80,7 @@ TEST(FlipAccessStaticObjectBecomesBottom)
 
 TEST(FlipAccessStandardObjectBecomesBottom)
 {
-    gc::heap::heap_struct::init_gc(4096, 25);
+    gc::init(4096, 25);
 
     gc::static_ptr<B> b(new B());
     b->_a->val;

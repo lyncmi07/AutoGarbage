@@ -63,7 +63,7 @@ int main()
 
     std::cout << "Running performance test" << std::endl;
 
-    gc::heap::heap_struct::init_gc(10000000, 25);
+    gc::init(10000000, 25);
 
     {
         Timer allAllocationsTimer("1,000,000 Allocations", 1000000.0);

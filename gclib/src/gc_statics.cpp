@@ -1,21 +1,18 @@
-#include <unordered_set>
+#include "gc_statics.h"
 
-#include "gc_static_ptr.h"
+#include <iostream>
+#include "gc_heap.h"
 
-namespace gc
+void gc::init(size_t heap_size, unsigned int max_allocation_attempts_before_gc)
 {
-    class object;
-    namespace heap
-    {
-        class free_cell;
-    }
+    gc::heap::heap_struct::init_gc(heap_size, max_allocation_attempts_before_gc);
+}
+void gc::debug()
+{
+    gc::heap::heap_struct::get()->print_gc_debug();
+}
 
-    size_t next_ptr_offset = 0;
-
-    unsigned int _current_grey_objects = 0;
-
-    namespace heap
-    {
-        bool _odd_iteration = true;
-    }
+void gc::info()
+{
+    gc::heap::heap_struct::get()->print_gc_info();
 }

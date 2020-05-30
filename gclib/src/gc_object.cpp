@@ -14,14 +14,12 @@ void gc::object::gc_grey()
 {
     _mark = 'G';
     gc::heap::heap_struct::get()->make_grey(this);
-    _current_grey_objects++;
 }
 
 void gc::object::gc_black()
 {
     _mark = 'B';
     gc::heap::heap_struct::get()->make_black(this);
-    _current_grey_objects--;
     gc_grey_fields();
 }
 
