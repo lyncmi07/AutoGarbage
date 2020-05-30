@@ -31,17 +31,17 @@ namespace gc
 
 	        virtual bool* gc_fields_end();
 
-            inline gc::object* fwd_object()
+            inline gc::object* fwd_object() const
             {
                 return (gc::object*) fwd_treadmill();
             }
 
-            inline gc::object* back_object()
+            inline gc::object* back_object() const
             {
                 return (gc::object*) back_treadmill();
             }
 
-            char current_mark();
+            char current_mark() const;
 	        virtual void gc_mark();
         public:
 

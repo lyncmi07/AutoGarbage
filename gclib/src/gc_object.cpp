@@ -55,7 +55,7 @@ void* gc::object::operator new(size_t size)
     return p;
 }
 
-char gc::object::current_mark()
+char gc::object::current_mark() const
 {
     return _mark;
 }
