@@ -1,8 +1,13 @@
 #ifndef GC_TEST_ACCESS_H
 #define GC_TEST_ACCESS_H
 
-#include "gc_cell.h"
-#include "gc_object.h"
+namespace gc
+{
+    class object;
+    namespace heap {
+        class cell;
+    }
+}
 
 namespace gc_test_access
 {
@@ -12,6 +17,9 @@ namespace gc_test_access
     gc::object* top();
     gc::object* scan();
     gc::heap::cell* free();
+
+    gc::heap::cell* back_treadmill(const gc::heap::cell* cell);
+    gc::heap::cell* fwd_treadmill(const gc::heap::cell* cell);
 }
 
 #endif

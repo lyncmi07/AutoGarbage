@@ -25,3 +25,12 @@ gc::heap::cell* gc_test_access::free()
 {
     gc::heap::heap_struct::get()->free();
 }
+
+gc::heap::cell* gc_test_access::back_treadmill(const gc::heap::cell* cell)
+{
+    cell->back_treadmill();
+}
+gc::heap::cell* gc_test_access::fwd_treadmill(const gc::heap::cell* cell)
+{
+    cell->fwd_treadmill();
+}

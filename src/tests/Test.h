@@ -30,7 +30,7 @@ int assert_in_list(gc::heap::cell* first_list_cell, gc::heap::cell* list_end_cel
     while (current_cell != list_end_cell)
     {
         if (current_cell == cell) return 0;
-        current_cell = current_cell->fwd_treadmill();
+        current_cell = gc_test_access::fwd_treadmill(current_cell);
     }
 
     return 1;
@@ -40,7 +40,7 @@ int assert_bottom(gc::heap::cell* cell)
 {
     return assert_in_list(
             gc_test_access::bottom(),
-            gc_test_access::top()->back_treadmill(),
+            gc_test_access::back_treadmill(gc_test_access::top()),
             cell);
 }
 
@@ -48,21 +48,21 @@ int assert_top(gc::heap::cell* cell)
 {
     return assert_in_list(
             gc_test_access::top(),
-            gc_test_access::scan()->back_treadmill(),
+            gc_test_access::back_treadmill(gc_test_access::scan()),
             cell);
 }
 int assert_scan(gc::heap::cell* cell)
 {
     return assert_in_list(
             gc_test_access::scan(),
-            gc_test_access::free()->back_treadmill(),
+            gc_test_access::back_treadmill(gc_test_access::free()),
             cell);
 }
 int assert_free(gc::heap::cell* cell)
 {
     return assert_in_list(
             gc_test_access::free(),
-            gc_test_access::bottom()->back_treadmill(),
+            gc_test_access::back_treadmill(gc_test_access::bottom()),
             cell);
 }
 

@@ -59,7 +59,7 @@ void gc::heap::cell::back_link_location(gc::heap::cell* prev_cell)
     if (_back_location != nullptr) _back_location->_fwd_location = this;
 }
 
-void* gc::heap::cell::actual_position()
+void* gc::heap::cell::actual_position() const
 {
     char* actual_position = (char*) this;
     if (_using_vtable_offset) actual_position -= 8;
@@ -134,31 +134,12 @@ gc::heap::cell* gc::heap::cell::resize(size_t size_decrease)
     }
 }
 
-bool gc::heap::cell::mergable_with_back_treadmill()
-{
-    return back_treadmill()->mergable_with_fwd_treadmill();
-}
-
-bool gc::heap::cell::mergable_with_fwd_treadmill()
-{
-    void* contiguous_position = (void*)((char*)actual_position()) + size();
-
-    return contiguous_position == (void*)((char*)fwd_treadmill()->actual_position());
-}
-
-void gc::heap::cell::merge_with_fwd_treadmill()
-{
-    size_t fwd_cell_size = fwd_treadmill()->size();
-    fwd_link_treadmill(fwd_treadmill()->fwd_treadmill());
-    _size += fwd_cell_size;
-}
-
-bool gc::heap::cell::mergable_with_back_location()
+bool gc::heap::cell::mergable_with_back_location() const
 {
     return back_location()->mergable_with_fwd_location();
 }
 
-bool gc::heap::cell::mergable_with_fwd_location()
+bool gc::heap::cell::mergable_with_fwd_location() const
 {
     void* contiguous_position = (void*)((char*)actual_position()) + size();
 
@@ -172,13 +153,13 @@ void gc::heap::cell::merge_with_fwd_location()
     _size += fwd_cell_size;
 }
 
-bool gc::heap::cell::garunteed_free()
+bool gc::heap::cell::garunteed_free() const
 {
     char global_gc_iteration = gc::heap::heap_struct::get()->gc_iteration();
     return (_iteration != global_gc_iteration) && (_iteration != (global_gc_iteration - 1)); //Not using less than because the integer wraps
 }
 
-bool gc::heap::cell::iteration_stale()
+bool gc::heap::cell::iteration_stale() const
 {
     return _iteration != gc::heap::heap_struct::get()->gc_iteration();
 }
