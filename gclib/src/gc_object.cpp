@@ -88,14 +88,3 @@ void gc::object::gc_mark()
     }
 
 }
-
-void gc::object::debug_fields()
-{
-    std::cout << "The object starts at: " << this << std::endl;
-    std::cout << "The fields end at: " << ((unsigned long)gc_fields_end()) - ((unsigned long)this) << std::endl;
-}
-
-void gc::object::debug_gc()
-{
-    std::cout << "Marked: " << _mark << std::endl;
-}

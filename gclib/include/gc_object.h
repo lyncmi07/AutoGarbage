@@ -10,6 +10,14 @@
 
 namespace gc
 {
+    namespace heap
+    {
+        class heap_struct;
+    }
+    template<class T> class array;
+    template<class T> class dyn_array_impl;
+    template<class T> class static_ptr;
+    template<class T> class field;
 
     class object : public gc::heap::cell
     {
@@ -22,18 +30,6 @@ namespace gc
             void gc_grey_fields();
 
 	        virtual bool* gc_fields_end();
-        public:
-
-            object();
-
-            void* operator new(size_t size);
-
-            char current_mark();
-
-	        virtual void gc_mark();
-
-	        void debug_fields();
-	        void debug_gc();
 
             inline gc::object* fwd_object()
             {
@@ -44,8 +40,21 @@ namespace gc
             {
                 return (gc::object*) back_treadmill();
             }
-    };
 
+            char current_mark();
+	        virtual void gc_mark();
+        public:
+
+            object();
+
+            void* operator new(size_t size);
+
+            friend class gc::heap::heap_struct;
+            template<class T> friend class gc::array;
+            template<class T> friend class dyn_array_impl;
+            template<class T> friend class gc::static_ptr;
+            template<class T> friend class gc::field;
+    };
 }
 
 #endif
