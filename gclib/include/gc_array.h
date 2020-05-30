@@ -1,30 +1,37 @@
 #ifndef GC_LIB_ARRAY_H
 #define GC_LIB_ARRAY_H
 
-#include "gc_cell.h"
-#include "gc_object.h"
-#include "gc_field.h"
-
-#include <iostream>
+#include "gc_heap.h"
+#include "gc_dyn_array_impl.h"
 
 namespace gc
 {
-    template<class T, int ARRAY_SIZE>
+    template<class T>
     class array : public gc::object
     {
         private:
-            gc::field<T> _array[ARRAY_SIZE];
+            gc::field<gc::dyn_array_impl<T>> _internal_array;
             END_GC_FIELDS;
-
         public:
-            array()
+            array(size_t array_size):
+                _internal_array(nullptr)
             {
+                gc::dyn_array_impl<T>* _array_position =
+                    (gc::dyn_array_impl<T>*) gc::heap::heap_struct::get()->malloc(
+                            sizeof(gc::object)
+                            + (sizeof(gc::field<T>) * array_size)
+                            + (sizeof(void*))
+                        );
+                _array_position = new (_array_position) gc::dyn_array_impl<T>(array_size);
+
+
+                _internal_array = _array_position;
             }
 
             gc::field<T>& operator[](int i)
             {
                 gc_mark();
-                return _array[i];
+                return _internal_array[i];
             }
     };
 }

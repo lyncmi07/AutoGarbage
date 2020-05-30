@@ -7,8 +7,7 @@ namespace gc
 {
 
     class object;
-    template<class T, int ARRAY_SIZE> class array;
-    template<class T> class dyn_array;
+    template<class T> class array;
     template<class T> class dyn_array_impl;
 
     template<class T> class field;
@@ -53,17 +52,17 @@ namespace gc
             }
     };
 
-    template<class T> class field<gc::dyn_array<T>>
+    template<class T> class field<gc::array<T>>
     {
         private:
-            gc::dyn_array<T>* _object;
+            gc::array<T>* _object;
         public:
             field():
                 _object(nullptr)
             {
             }
 
-            field(gc::dyn_array<T>* array_object):
+            field(gc::array<T>* array_object):
                 _object(array_object)
             {
                 if (_object != nullptr && _object->current_mark() == 'I') gc::heap::heap_struct::get()->remove_from_initialization_list(_object);
@@ -74,39 +73,7 @@ namespace gc
                 return (*_object)[i];
             }
 
-            gc::dyn_array<T>* debug_object()
-	        {
-	            return _object;
-	        }
-
-	        void gc_mark()
-	        {
-		        if (_object != nullptr) _object->gc_mark();
-	        }
-
-            inline bool holds_valid_object()
-            {
-                return _object != nullptr;
-            }
-    };
-
-    template<class S, int ARRAY_SIZE> class field<gc::array<S, ARRAY_SIZE>>
-    {
-        private:
-            gc::array<S, ARRAY_SIZE>* _object;
-        public:
-            field():
-                _object(new gc::array<S, ARRAY_SIZE>())
-            {
-            }
-
-
-            gc::field<S>& operator[](int i)
-            {
-                return (*_object)[i];
-            }
-
-            gc::array<S, ARRAY_SIZE>* debug_object()
+            gc::array<T>* debug_object()
 	        {
 	            return _object;
 	        }

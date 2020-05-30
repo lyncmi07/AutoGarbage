@@ -4,6 +4,7 @@
 #include "Test.h"
 
 #include "gc.h"
+#include "gc_test_access.h"
 
 namespace ArrayTests
 {
@@ -23,9 +24,9 @@ TEST(ReferencedArrayIsNotCollected)
 {
     gc::init(4096, 25);
 
-    gc::static_ptr<gc::dyn_array<A>> arr(new gc::dyn_array<A>(3));
+    gc::static_ptr<gc::array<A>> arr(new gc::array<A>(3));
 
-    gc::heap::heap_struct::get()->collect_garbage();
+    gc_test_access::collect_garbage();
     ASSERT_TOP(arr.debug_object());
 
     TEST_SUCCESS;
@@ -38,7 +39,7 @@ TEST(ObjectsInArrayNotCollected)
     A* a0ptr;
     A* a1ptr;
     A* a2ptr;
-    gc::static_ptr<gc::dyn_array<A>> arr(new gc::dyn_array<A>(3));
+    gc::static_ptr<gc::array<A>> arr(new gc::array<A>(3));
     {
         gc::static_ptr<A> a0(new A(0));
         a0ptr = a0.debug_object();
@@ -52,8 +53,8 @@ TEST(ObjectsInArrayNotCollected)
         arr[2] = a2;
     }
 
-    gc::heap::heap_struct::get()->collect_garbage();
-    gc::heap::heap_struct::get()->collect_garbage();
+    gc_test_access::collect_garbage();
+    gc_test_access::collect_garbage();
 
     // The objects are not referenced in static pointers so should appear in the scan list after garbage collection
     ASSERT_SCAN(a0ptr);
@@ -69,7 +70,7 @@ TEST(IndexSpacedObjectsInArrayNotCollected)
 
     A* a0ptr;
     A* a2ptr;
-    gc::static_ptr<gc::dyn_array<A>> arr(new gc::dyn_array<A>(3));
+    gc::static_ptr<gc::array<A>> arr(new gc::array<A>(3));
     {
         gc::static_ptr<A> a0(new A(0));
         a0ptr = a0.debug_object();
@@ -80,8 +81,8 @@ TEST(IndexSpacedObjectsInArrayNotCollected)
         arr[2] = a2;
     }
 
-    gc::heap::heap_struct::get()->collect_garbage();
-    gc::heap::heap_struct::get()->collect_garbage();
+    gc_test_access::collect_garbage();
+    gc_test_access::collect_garbage();
 
     // The objects are not referenced in static pointers so should appear in the scan list after garbage collection
     ASSERT_SCAN(a0ptr);
@@ -96,7 +97,7 @@ TEST(UnassignedElementCollectedNewElementNotCollected)
 
     A* originalObj;
     A* newObj;
-    gc::static_ptr<gc::dyn_array<A>> arr(new gc::dyn_array<A>(3));
+    gc::static_ptr<gc::array<A>> arr(new gc::array<A>(3));
     {
         gc::static_ptr<A> a0(new A(0));
         originalObj = a0.debug_object();
@@ -104,7 +105,7 @@ TEST(UnassignedElementCollectedNewElementNotCollected)
         arr[0] = a0;
     }
 
-    gc::heap::heap_struct::get()->collect_garbage();
+    gc_test_access::collect_garbage();
 
     {
         gc::static_ptr<A> a1(new A(1));
@@ -114,11 +115,11 @@ TEST(UnassignedElementCollectedNewElementNotCollected)
     }
 
     // On initial collect, the original object would have been marked before it became unreferenced
-    gc::heap::heap_struct::get()->collect_garbage();
+    gc_test_access::collect_garbage();
     ASSERT_SCAN(newObj);
     ASSERT_SCAN(originalObj);
 
-    gc::heap::heap_struct::get()->collect_garbage();
+    gc_test_access::collect_garbage();
     ASSERT_SCAN(newObj);
     ASSERT_FREE(originalObj);
 
@@ -129,10 +130,10 @@ TEST(MultiDimentionalElementsNotCollected)
 {
     gc::init(4096, 25);
 
-    gc::static_ptr<gc::dyn_array<gc::dyn_array<A>>> arr(new gc::dyn_array<gc::dyn_array<A>>(2));
+    gc::static_ptr<gc::array<gc::array<A>>> arr(new gc::array<gc::array<A>>(2));
 
-    arr[0] = new gc::dyn_array<A>(2);
-    arr[1] = new gc::dyn_array<A>(2);
+    arr[0] = new gc::array<A>(2);
+    arr[1] = new gc::array<A>(2);
 
     A* a00ptr;
     A* a01ptr;
@@ -154,8 +155,8 @@ TEST(MultiDimentionalElementsNotCollected)
         arr[1][1] = a11;
     }
 
-    gc::heap::heap_struct::get()->collect_garbage();
-    gc::heap::heap_struct::get()->collect_garbage();
+    gc_test_access::collect_garbage();
+    gc_test_access::collect_garbage();
 
     ASSERT_SCAN(a00ptr);
     ASSERT_SCAN(a01ptr);

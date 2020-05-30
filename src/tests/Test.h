@@ -6,6 +6,7 @@
 #include "gc_cell.h"
 #include "gc_heap.h"
 #include "gc_object.h"
+#include "gc_test_access.h"
 
 #define TEST(func_name) int func_name()
 
@@ -38,30 +39,30 @@ int assert_in_list(gc::heap::cell* first_list_cell, gc::heap::cell* list_end_cel
 int assert_bottom(gc::heap::cell* cell)
 {
     return assert_in_list(
-            gc::heap::heap_struct::get()->bottom(),
-            gc::heap::heap_struct::get()->top()->back_treadmill(),
+            gc_test_access::bottom(),
+            gc_test_access::top()->back_treadmill(),
             cell);
 }
 
 int assert_top(gc::heap::cell* cell)
 {
     return assert_in_list(
-            gc::heap::heap_struct::get()->top(),
-            gc::heap::heap_struct::get()->scan()->back_treadmill(),
+            gc_test_access::top(),
+            gc_test_access::scan()->back_treadmill(),
             cell);
 }
 int assert_scan(gc::heap::cell* cell)
 {
     return assert_in_list(
-            gc::heap::heap_struct::get()->scan(),
-            gc::heap::heap_struct::get()->free()->back_treadmill(),
+            gc_test_access::scan(),
+            gc_test_access::free()->back_treadmill(),
             cell);
 }
 int assert_free(gc::heap::cell* cell)
 {
     return assert_in_list(
-            gc::heap::heap_struct::get()->free(),
-            gc::heap::heap_struct::get()->bottom()->back_treadmill(),
+            gc_test_access::free(),
+            gc_test_access::bottom()->back_treadmill(),
             cell);
 }
 

@@ -4,9 +4,14 @@
 #include <cstdlib>
 #include <vector>
 
+#include "gc_test_access.h"
+
 namespace gc
 {
+    template<class T> class field;
     template<class T> class static_ptr;
+    template<class T> class array;
+    template<class T> class dyn_array_impl;
     class object;
     void init(size_t heap_size, unsigned int max_allocation_attempts_before_gc);
     void debug();
@@ -77,13 +82,8 @@ namespace heap
             void print_gc_info();
 
             gc::heap::cell* attempt_allocate(size_t size);
-        public:
-            void* malloc(size_t size);
 
-            inline static gc::heap::heap_struct* get()
-            {
-                return INSTANCE;
-            }
+            void* malloc(size_t size);
 
             inline gc::static_ptr<gc::object>* static_objects_start_ptr();
             inline gc::object* initialization_objects_start_ptr();
@@ -93,9 +93,6 @@ namespace heap
             gc::object* scan();
             void set_scan(gc::object* new_scan);
             gc::heap::cell* free();
-
-
-            inline void* end_gc_fields_magic_ptr();
 
             inline char gc_iteration();
 
@@ -121,9 +118,34 @@ namespace heap
 
             void add_fragment_memory(void* position, size_t size);
 
+
+            //library friend functions
             friend void gc::init(size_t heap_size, unsigned int max_allocation_attempts_before_gc);
             friend void gc::debug();
             friend void gc::info();
+
+            //library friend classes
+            friend class gc::object;
+            friend class gc::heap::cell;
+            template<class A> friend class gc::array;
+            template<class D> friend class gc::dyn_array_impl;
+            template<class F> friend class gc::field;
+            template<class S> friend class gc::static_ptr;
+
+            //test friends
+            friend void gc_test_access::collect_garbage();
+            friend gc::object* gc_test_access::bottom();
+            friend gc::object* gc_test_access::top();
+            friend gc::object* gc_test_access::scan();
+            friend gc::heap::cell* gc_test_access::free();
+
+        public:
+            inline void* end_gc_fields_magic_ptr();
+            inline static gc::heap::heap_struct* get()
+            {
+                return INSTANCE;
+            }
+
     };
 }}
 

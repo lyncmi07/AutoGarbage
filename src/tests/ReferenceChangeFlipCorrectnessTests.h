@@ -4,6 +4,7 @@
 #include "Test.h"
 
 #include "gc.h"
+#include "gc_test_access.h"
 
 namespace ReferenceChangeFlipCorrectnessTests
 {
@@ -35,18 +36,18 @@ namespace ReferenceChangeFlipCorrectnessTests
         gc::static_ptr<B> ptr1(new B());
         B* b1 = ptr1.debug_object();
 
-        gc::heap::heap_struct::get()->collect_garbage();
+        gc_test_access::collect_garbage();
         ASSERT_TOP(b1);
 
         gc::static_ptr<B> ptr2(new B());
         B* b2 = ptr2.debug_object();
         ptr1 = ptr2;
 
-        gc::heap::heap_struct::get()->collect_garbage();
+        gc_test_access::collect_garbage();
         ASSERT_BOTTOM(b2);
         ASSERT_SCAN(b1);
 
-        gc::heap::heap_struct::get()->collect_garbage();
+        gc_test_access::collect_garbage();
         ASSERT_BOTTOM(b2); //In bottom after garbage collection because its pointer to by two pointers
         ASSERT_FREE(b1);
 
@@ -61,15 +62,15 @@ namespace ReferenceChangeFlipCorrectnessTests
 
         A* a1 = ptr1.debug_object()->a.debug_object();
 
-        gc::heap::heap_struct::get()->collect_garbage();
+        gc_test_access::collect_garbage();
         ASSERT_SCAN(a1);
 
         ptr1->a = new A();
 
         A* a2 = ptr1.debug_object()->a.debug_object();
 
-        gc::heap::heap_struct::get()->collect_garbage();
-        gc::heap::heap_struct::get()->collect_garbage(); // Collect again as a1 will have been black going to ecru on first collection
+        gc_test_access::collect_garbage();
+        gc_test_access::collect_garbage(); // Collect again as a1 will have been black going to ecru on first collection
         ASSERT_FREE(a1);
         ASSERT_SCAN(a2);
 

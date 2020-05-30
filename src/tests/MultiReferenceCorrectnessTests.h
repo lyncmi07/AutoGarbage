@@ -3,6 +3,7 @@
 
 #include "Test.h"
 #include "gc.h"
+#include "gc_test_access.h"
 
 namespace MultiReferenceCorrectnessTests
 {
@@ -41,13 +42,13 @@ namespace MultiReferenceCorrectnessTests
             {
                 gc::static_ptr<B> ptr1(b);
 
-                gc::heap::heap_struct::get()->collect_garbage();
+                gc_test_access::collect_garbage();
                 ASSERT_TOP(b);
             }
 
             gc::static_ptr<B> ptr2(b);
 
-            gc::heap::heap_struct::get()->collect_garbage();
+            gc_test_access::collect_garbage();
             ASSERT_TOP(b);
         }
 
@@ -62,11 +63,11 @@ namespace MultiReferenceCorrectnessTests
         gc::static_ptr<B> ptr1(b);
         ASSERT_TOP(b);
 
-        gc::heap::heap_struct::get()->collect_garbage();
+        gc_test_access::collect_garbage();
 
         gc::static_ptr<B> ptr2(b);
 
-        gc::heap::heap_struct::get()->collect_garbage();
+        gc_test_access::collect_garbage();
         ASSERT_BOTTOM(b);
 
         TEST_SUCCESS;

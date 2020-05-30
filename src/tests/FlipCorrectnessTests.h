@@ -3,6 +3,7 @@
 
 #include "Test.h"
 #include "gc.h"
+#include "gc_test_access.h"
 
 namespace FlipCorrectnessTests
 {
@@ -39,7 +40,7 @@ TEST(FlipBottomStandardObjectBecomesScan)
 
     ASSERT_BOTTOM(b.debug_object()->_a.debug_object());
 
-    gc::heap::heap_struct::get()->collect_garbage();
+    gc_test_access::collect_garbage();
     ASSERT_SCAN(b.debug_object()->_a.debug_object());
 
 
@@ -55,7 +56,7 @@ TEST(FlipBottomStaticObjectBecomesTop)
 
     ASSERT_BOTTOM(b.debug_object());
 
-    gc::heap::heap_struct::get()->collect_garbage();
+    gc_test_access::collect_garbage();
     ASSERT_TOP(b.debug_object());
 
     TEST_SUCCESS;
@@ -70,7 +71,7 @@ TEST(FlipAccessStaticObjectBecomesBottom)
 
     ASSERT_BOTTOM(b.debug_object());
 
-    gc::heap::heap_struct::get()->collect_garbage();
+    gc_test_access::collect_garbage();
     b->_a;
 
     ASSERT_BOTTOM(b.debug_object());
@@ -87,7 +88,7 @@ TEST(FlipAccessStandardObjectBecomesBottom)
 
     ASSERT_BOTTOM(b.debug_object()->_a.debug_object());
 
-    gc::heap::heap_struct::get()->collect_garbage();
+    gc_test_access::collect_garbage();
     b->_a->val;
 
     ASSERT_BOTTOM(b.debug_object()->_a.debug_object());
