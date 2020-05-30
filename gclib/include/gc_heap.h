@@ -73,6 +73,9 @@ namespace heap
             void print_static_objects_list();
             void print_heap_pointers();
 
+            void print_gc_debug();
+            void print_gc_info();
+
             gc::heap::cell* attempt_allocate(size_t size);
         public:
             void* malloc(size_t size);
@@ -112,9 +115,6 @@ namespace heap
 
             //Ensure there are no grey objects left and flip heap
             void collect_garbage();
-
-            void print_gc_debug();
-            void print_gc_info();
 
             void add_to_initialization_list(gc::object* object);
             void remove_from_initialization_list(gc::object* object);

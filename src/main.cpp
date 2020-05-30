@@ -69,16 +69,6 @@ int main()
 
     gc::init(10000, 25);
 
-    /*int i = 0;
-    while(true)
-    {
-        gc::static_ptr<B> b(new B());
-        gc::heap::heap_struct::get()->print_gc_debug();
-        // std::cout << "loop:" << i++ << " ";
-        // gc::heap::heap_struct::get()->print_gc_info();
-    }*/
-
-
     gc::static_ptr<C> c(new C(10));
 
     c->_array[0] = new A(10);
@@ -89,7 +79,7 @@ int main()
     std::cout << c->_array[1]->i() << std::endl;
     std::cout << c->_array[0]->i() << std::endl;
 
-    gc::heap::heap_struct::get()->print_gc_debug();
+    gc::debug();
 
     #if (PERFORMANCE_TIMERS)
         scoped_timer::print_info();
@@ -100,7 +90,7 @@ int main()
 
 void debug()
 {
-    gc::heap::heap_struct::get()->print_gc_debug();
+    gc::debug();
 }
 
 void dump_memory(void* position, int start, int end)
