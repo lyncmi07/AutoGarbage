@@ -46,7 +46,7 @@ class scoped_timer
     const timer_group _group;
     const std::chrono::time_point<std::chrono::steady_clock> _start_time;
 
-    static std::string* populate_timer_group_names()
+    static void populate_timer_group_names()
     {
         scoped_timer::timer_group_names = new std::string[timer_group::size];
 
