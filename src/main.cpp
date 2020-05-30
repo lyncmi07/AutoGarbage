@@ -52,11 +52,11 @@ class B : public gc::object
 class C : public gc::object
 {
     public:
-    gc::field<gc::dyn_array<A>> _array;
+    gc::field<gc::array<A>> _array;
     END_GC_FIELDS;
 
     public:
-        C(size_t size): _array(new gc::dyn_array<A>(size))
+        C(size_t size): _array(new gc::array<A>(size))
         {
         }
 };
