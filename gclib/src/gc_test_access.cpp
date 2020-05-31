@@ -3,6 +3,8 @@
 #include "gc_heap.h"
 #include "gc_cell.h"
 #include "gc_object.h"
+#include "gc_field.h"
+#include "gc_static_ptr.h"
 
 void gc_test_access::collect_garbage()
 {

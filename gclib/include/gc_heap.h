@@ -4,8 +4,6 @@
 #include <cstdlib>
 #include <vector>
 
-#include "gc_test_access.h"
-
 namespace gc
 {
     template<class T> class field;
@@ -17,7 +15,23 @@ namespace gc
     void debug();
     void info();
 
-namespace heap
+    namespace heap
+    {
+        class cell;
+    }
+}
+
+namespace gc_test_access
+{
+    void collect_garbage();
+    gc::object* bottom();
+    gc::object* top();
+    gc::object* scan();
+    gc::heap::cell* free();
+}
+
+namespace gc
+{ namespace heap
 {
 
     struct fragment_memory
@@ -27,8 +41,6 @@ namespace heap
 
         fragment_memory(void* _fragment_position, size_t _size);
     };
-
-    class cell;
 
     class heap_struct
     {

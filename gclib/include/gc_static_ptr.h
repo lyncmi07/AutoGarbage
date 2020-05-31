@@ -3,6 +3,11 @@
 
 #include "gc_heap.h"
 
+namespace gc_test_access
+{
+    template<class T> T* debug_object(const gc::static_ptr<T>& static_ptr);
+};
+
 namespace gc
 {
     template<class T> class field;
@@ -39,15 +44,12 @@ namespace gc
                 gc::heap::heap_struct::get()->remove_static(this);
             }
 
-            gc::dyn_array_impl<T>* debug_object()
-            {
-                return _object;
-            }
-
             void gc_mark()
             {
                 if (_object != nullptr) _object->gc_mark();
             }
+
+            template<class U> friend U* gc_test_access::debug_object(const gc::static_ptr<U>& static_ptr);
     };
 
     template<class T> class static_ptr<gc::array<T>>
@@ -77,15 +79,12 @@ namespace gc
                 gc::heap::heap_struct::get()->remove_static(this);
             }
 
-            gc::array<T>* debug_object()
-            {
-                return _object;
-            }
-
             void gc_mark()
             {
                 if (_object != nullptr) _object->gc_mark();
             }
+
+            template<class U> friend U* gc_test_access::debug_object(const gc::static_ptr<U>& static_ptr);
     };
 
     template<class T>
@@ -124,16 +123,9 @@ namespace gc
                 gc::heap::heap_struct::get()->add_static(this);
             }
 
-            gc::static_ptr<T>& operator=(const gc::static_ptr<T>& sptr2)
+            operator T*() const
             {
-                _object = sptr2._object;
-                return *this;
-            }
-
-            gc::static_ptr<T>& operator=(const gc::field<T>& field)
-            {
-                _object = field._object;
-                return *this;
+                return _object;
             }
 
             gc::static_ptr<T>& operator=(T* object)
@@ -153,15 +145,12 @@ namespace gc
                 return _object;
             }
 
-            T* debug_object()
-            {
-                return _object;
-            }
-
             void gc_mark()
             {
                 if (_object != nullptr) _object->gc_mark();
             }
+
+            template<class U> friend U* gc_test_access::debug_object(const gc::static_ptr<U>& static_ptr);
     };
 }
 

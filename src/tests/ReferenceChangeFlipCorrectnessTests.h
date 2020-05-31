@@ -34,13 +34,13 @@ namespace ReferenceChangeFlipCorrectnessTests
         gc::init(4096, 25);
 
         gc::static_ptr<B> ptr1(new B());
-        B* b1 = ptr1.debug_object();
+        B* b1 = gc_test_access::debug_object(ptr1);
 
         gc_test_access::collect_garbage();
         ASSERT_TOP(b1);
 
         gc::static_ptr<B> ptr2(new B());
-        B* b2 = ptr2.debug_object();
+        B* b2 = gc_test_access::debug_object(ptr2);
         ptr1 = ptr2;
 
         gc_test_access::collect_garbage();
@@ -60,14 +60,14 @@ namespace ReferenceChangeFlipCorrectnessTests
 
         gc::static_ptr<B> ptr1(new B());
 
-        A* a1 = ptr1.debug_object()->a.debug_object();
+        A* a1 = gc_test_access::debug_object(gc_test_access::debug_object(ptr1)->a);
 
         gc_test_access::collect_garbage();
         ASSERT_SCAN(a1);
 
         ptr1->a = new A();
 
-        A* a2 = ptr1.debug_object()->a.debug_object();
+        A* a2 = gc_test_access::debug_object(gc_test_access::debug_object(ptr1)->a);
 
         gc_test_access::collect_garbage();
         gc_test_access::collect_garbage(); // Collect again as a1 will have been black going to ecru on first collection

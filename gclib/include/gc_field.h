@@ -3,6 +3,11 @@
 
 #include "gc_heap.h"
 
+namespace gc_test_access
+{
+    template<class U> U* debug_object(const gc::field<U>& field);
+};
+
 namespace gc
 {
 
@@ -36,11 +41,6 @@ namespace gc
                 return (*_object)[i];
             }
 
-            gc::dyn_array_impl<T>* debug_object()
-	        {
-	            return _object;
-	        }
-
 	        void gc_mark()
 	        {
 		        if (_object != nullptr) _object->gc_mark();
@@ -50,6 +50,8 @@ namespace gc
             {
                 return _object != nullptr;
             }
+
+            template<class U> friend U* gc_test_access::debug_object(const gc::field<U>& field);
     };
 
     template<class T> class field<gc::array<T>>
@@ -73,11 +75,6 @@ namespace gc
                 return (*_object)[i];
             }
 
-            gc::array<T>* debug_object()
-	        {
-	            return _object;
-	        }
-
 	        void gc_mark()
 	        {
 		        if (_object != nullptr) _object->gc_mark();
@@ -87,6 +84,8 @@ namespace gc
             {
                 return _object != nullptr;
             }
+
+            template<class U> friend U* gc_test_access::debug_object(const gc::field<U>& field);
     };
 
     template<class T> class field
@@ -123,16 +122,9 @@ namespace gc
                 return *this;
             }
 
-            field<T>& operator=(const field<T>& f2)
+            operator T*() const
             {
-                _object = f2._object;
-                return *this;
-            }
-
-            field<T>& operator=(static_ptr<T>& sptr)
-            {
-                _object = sptr.debug_object();
-                return *this;
+                return _object;
             }
 
 	        T* operator->()
@@ -143,11 +135,6 @@ namespace gc
 
             
 
-	        T* debug_object()
-	        {
-	            return _object;
-	        }
-
 	        void gc_mark()
 	        {
 		        if (_object != nullptr) _object->gc_mark();
@@ -157,6 +144,8 @@ namespace gc
             {
                 return _object != nullptr;
             }
+
+            template<class U> friend U* gc_test_access::debug_object(const gc::field<U>& field);
     };
 }
 #endif

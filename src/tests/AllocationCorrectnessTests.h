@@ -35,7 +35,7 @@ TEST(StaticPtrAllocationObjectIsInTopList)
     gc::init(4096, 25);
 
     gc::static_ptr<A> a(new A());
-    ASSERT_TOP(a.debug_object());
+    ASSERT_TOP(gc_test_access::debug_object(a));
 
     TEST_SUCCESS;
 }
@@ -45,7 +45,8 @@ TEST(StandardAllocationObjectIsInScanList)
     gc::init(4096, 25);
 
     gc::static_ptr<B> b(new B());
-    ASSERT_SCAN(b.debug_object()->_a.debug_object());
+    ASSERT_SCAN(gc_test_access::debug_object(gc_test_access::debug_object(b)->_a));
+    ASSERT_SCAN(gc_test_access::debug_object(gc_test_access::debug_object(b)->_a));
 
     TEST_SUCCESS;
 }

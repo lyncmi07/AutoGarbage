@@ -38,10 +38,10 @@ TEST(FlipBottomStandardObjectBecomesScan)
     gc::static_ptr<B> b(new B());
     b->_a->val;
 
-    ASSERT_BOTTOM(b.debug_object()->_a.debug_object());
+    ASSERT_BOTTOM(gc_test_access::debug_object(gc_test_access::debug_object(b)->_a));
 
     gc_test_access::collect_garbage();
-    ASSERT_SCAN(b.debug_object()->_a.debug_object());
+    ASSERT_SCAN(gc_test_access::debug_object(gc_test_access::debug_object(b)->_a));
 
 
     TEST_SUCCESS;
@@ -54,10 +54,10 @@ TEST(FlipBottomStaticObjectBecomesTop)
     gc::static_ptr<B> b(new B());
     b->_a;
 
-    ASSERT_BOTTOM(b.debug_object());
+    ASSERT_BOTTOM(gc_test_access::debug_object(b));
 
     gc_test_access::collect_garbage();
-    ASSERT_TOP(b.debug_object());
+    ASSERT_TOP(gc_test_access::debug_object(b));
 
     TEST_SUCCESS;
 }
@@ -69,12 +69,12 @@ TEST(FlipAccessStaticObjectBecomesBottom)
     gc::static_ptr<B> b(new B());
     b->_a;
 
-    ASSERT_BOTTOM(b.debug_object());
+    ASSERT_BOTTOM(gc_test_access::debug_object(b));
 
     gc_test_access::collect_garbage();
     b->_a;
 
-    ASSERT_BOTTOM(b.debug_object());
+    ASSERT_BOTTOM(gc_test_access::debug_object(b));
 
     TEST_SUCCESS;
 }
@@ -86,12 +86,12 @@ TEST(FlipAccessStandardObjectBecomesBottom)
     gc::static_ptr<B> b(new B());
     b->_a->val;
 
-    ASSERT_BOTTOM(b.debug_object()->_a.debug_object());
+    ASSERT_BOTTOM(gc_test_access::debug_object(gc_test_access::debug_object(b)->_a));
 
     gc_test_access::collect_garbage();
     b->_a->val;
 
-    ASSERT_BOTTOM(b.debug_object()->_a.debug_object());
+    ASSERT_BOTTOM(gc_test_access::debug_object(gc_test_access::debug_object(b)->_a));
 
     TEST_SUCCESS;
 }

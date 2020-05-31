@@ -4,7 +4,6 @@
 #include "Test.h"
 
 #include "gc.h"
-#include "gc_test_access.h"
 
 namespace ArrayTests
 {
@@ -27,7 +26,7 @@ TEST(ReferencedArrayIsNotCollected)
     gc::static_ptr<gc::array<A>> arr(new gc::array<A>(3));
 
     gc_test_access::collect_garbage();
-    ASSERT_TOP(arr.debug_object());
+    ASSERT_TOP(gc_test_access::debug_object(arr));
 
     TEST_SUCCESS;
 }
@@ -42,11 +41,11 @@ TEST(ObjectsInArrayNotCollected)
     gc::static_ptr<gc::array<A>> arr(new gc::array<A>(3));
     {
         gc::static_ptr<A> a0(new A(0));
-        a0ptr = a0.debug_object();
+        a0ptr = gc_test_access::debug_object(a0);
         gc::static_ptr<A> a1(new A(1));
-        a1ptr = a1.debug_object();
+        a1ptr = gc_test_access::debug_object(a1);
         gc::static_ptr<A> a2(new A(2));
-        a2ptr = a2.debug_object();
+        a2ptr = gc_test_access::debug_object(a2);
 
         arr[0] = a0;
         arr[1] = a1;
@@ -73,9 +72,9 @@ TEST(IndexSpacedObjectsInArrayNotCollected)
     gc::static_ptr<gc::array<A>> arr(new gc::array<A>(3));
     {
         gc::static_ptr<A> a0(new A(0));
-        a0ptr = a0.debug_object();
+        a0ptr = gc_test_access::debug_object(a0);
         gc::static_ptr<A> a2(new A(2));
-        a2ptr = a2.debug_object();
+        a2ptr = gc_test_access::debug_object(a2);
 
         arr[0] = a0;
         arr[2] = a2;
@@ -100,7 +99,7 @@ TEST(UnassignedElementCollectedNewElementNotCollected)
     gc::static_ptr<gc::array<A>> arr(new gc::array<A>(3));
     {
         gc::static_ptr<A> a0(new A(0));
-        originalObj = a0.debug_object();
+        originalObj = gc_test_access::debug_object(a0);
 
         arr[0] = a0;
     }
@@ -109,7 +108,7 @@ TEST(UnassignedElementCollectedNewElementNotCollected)
 
     {
         gc::static_ptr<A> a1(new A(1));
-        newObj = a1.debug_object();
+        newObj = gc_test_access::debug_object(a1);
 
         arr[0] = a1;
     }
@@ -141,13 +140,13 @@ TEST(MultiDimentionalElementsNotCollected)
     A* a11ptr;
     {
         gc::static_ptr<A> a00 = new A(0);
-        a00ptr = a00.debug_object();
+        a00ptr = gc_test_access::debug_object(a00);
         gc::static_ptr<A> a01 = new A(1);
-        a01ptr = a01.debug_object();
+        a01ptr = gc_test_access::debug_object(a01);
         gc::static_ptr<A> a10 = new A(2);
-        a10ptr = a10.debug_object();
+        a10ptr = gc_test_access::debug_object(a10);
         gc::static_ptr<A> a11 = new A(3);
-        a11ptr = a11.debug_object();
+        a11ptr = gc_test_access::debug_object(a11);
 
         arr[0][0] = a00;
         arr[0][1] = a01;

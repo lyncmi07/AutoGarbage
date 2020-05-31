@@ -78,12 +78,12 @@ namespace MultiReferenceCorrectnessTests
         gc::init(4096, 25);
 
         gc::static_ptr<B> ptr1(new B());
-        ASSERT_TOP(ptr1.debug_object());
+        ASSERT_TOP(gc_test_access::debug_object(ptr1));
 
         gc::static_ptr<B> ptr2(ptr1);
-        ASSERT_BOTTOM(ptr1.debug_object());
-        ASSERT_BOTTOM(ptr2.debug_object());
-        ASSERT_EQUALS(ptr1.debug_object(), ptr2.debug_object());
+        ASSERT_BOTTOM(gc_test_access::debug_object(ptr1));
+        ASSERT_BOTTOM(gc_test_access::debug_object(ptr2));
+        ASSERT_EQUALS(gc_test_access::debug_object(ptr1), gc_test_access::debug_object(ptr2));
 
         TEST_SUCCESS;
     }
@@ -96,9 +96,9 @@ namespace MultiReferenceCorrectnessTests
         gc::static_ptr<B> ptr2;
 
         ptr2 = ptr1;
-        ASSERT_TOP(ptr1.debug_object());
-        ASSERT_TOP(ptr2.debug_object()); // Adding to another ptr will cause gc_mark to be called moving the object to bottom
-        ASSERT_EQUALS(ptr1.debug_object(), ptr2.debug_object());
+        ASSERT_TOP(gc_test_access::debug_object(ptr1));
+        ASSERT_TOP(gc_test_access::debug_object(ptr2)); // Adding to another ptr will cause gc_mark to be called moving the object to bottom
+        ASSERT_EQUALS(gc_test_access::debug_object(ptr1), gc_test_access::debug_object(ptr2));
 
         TEST_SUCCESS;
     }
@@ -110,8 +110,8 @@ namespace MultiReferenceCorrectnessTests
         gc::static_ptr<B> ptr1 = new B();
         gc::static_ptr<B> ptr2;
 
-        ptr2 = ptr1.debug_object();
-        ASSERT_TOP(ptr1.debug_object());
+        ptr2 = gc_test_access::debug_object(ptr1);
+        ASSERT_TOP(gc_test_access::debug_object(ptr1));
 
         TEST_SUCCESS;
     }
@@ -124,8 +124,8 @@ namespace MultiReferenceCorrectnessTests
         gc::static_ptr<B> ptr2 = new B();
 
         ptr2->a = ptr1->a;
-        ASSERT_TOP(ptr2.debug_object()->a.debug_object());
-        ASSERT_EQUALS(ptr1.debug_object()->a.debug_object(), ptr2.debug_object()->a.debug_object());
+        ASSERT_TOP(gc_test_access::debug_object(gc_test_access::debug_object(ptr2)->a));
+        ASSERT_EQUALS(gc_test_access::debug_object(gc_test_access::debug_object(ptr1)->a), gc_test_access::debug_object(gc_test_access::debug_object(ptr2)->a));
 
         TEST_SUCCESS;
     }
@@ -135,11 +135,11 @@ namespace MultiReferenceCorrectnessTests
         gc::init(4096, 25);
 
         gc::static_ptr<B> ptr1(new B());
-        ASSERT_SCAN(ptr1.debug_object()->a.debug_object());
+        ASSERT_SCAN(gc_test_access::debug_object(gc_test_access::debug_object(ptr1)->a));
 
         gc::static_ptr<B> ptr2(new B(ptr1->a));
-        ASSERT_TOP(ptr1.debug_object()->a.debug_object());
-        ASSERT_EQUALS(ptr1.debug_object()->a.debug_object(), ptr2.debug_object()->a.debug_object());
+        ASSERT_TOP(gc_test_access::debug_object(gc_test_access::debug_object(ptr1)->a));
+        ASSERT_EQUALS(gc_test_access::debug_object(gc_test_access::debug_object(ptr1)->a), gc_test_access::debug_object(gc_test_access::debug_object(ptr2)->a));
 
         TEST_SUCCESS;
     }
@@ -152,8 +152,8 @@ namespace MultiReferenceCorrectnessTests
         gc::static_ptr<B> ptr2(new B());
 
         ptr2->a = ptr1->a;
-        ASSERT_BOTTOM(ptr2.debug_object());
-        ASSERT_EQUALS(ptr1.debug_object()->a.debug_object(), ptr2.debug_object()->a.debug_object());
+        ASSERT_BOTTOM(gc_test_access::debug_object(ptr2));
+        ASSERT_EQUALS(gc_test_access::debug_object(gc_test_access::debug_object(ptr1)->a), gc_test_access::debug_object(gc_test_access::debug_object(ptr2)->a));
 
         TEST_SUCCESS;
     }
@@ -165,9 +165,9 @@ namespace MultiReferenceCorrectnessTests
         gc::static_ptr<B> ptr1(new B());
         gc::static_ptr<B> ptr2(new B());
 
-        ptr2->a = ptr1->a.debug_object();
-        ASSERT_BOTTOM(ptr2.debug_object());
-        ASSERT_EQUALS(ptr1.debug_object()->a.debug_object(), ptr2.debug_object()->a.debug_object());
+        ptr2->a = gc_test_access::debug_object(ptr1)->a;
+        ASSERT_BOTTOM(gc_test_access::debug_object(ptr2));
+        ASSERT_EQUALS(gc_test_access::debug_object(gc_test_access::debug_object(ptr1)->a), gc_test_access::debug_object(gc_test_access::debug_object(ptr2)->a));
 
         TEST_SUCCESS;
     }
