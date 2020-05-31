@@ -21,6 +21,11 @@ namespace gc
     {
         private:
             gc::dyn_array_impl<T>* _object;
+
+	          void gc_mark()
+	          {
+		            if (_object != nullptr) _object->gc_mark();
+	          }
         public:
             field():
                 _object(nullptr)
@@ -63,18 +68,20 @@ namespace gc
                 return (*_object)[i];
             }
 
-	          void gc_mark()
-	          {
-		            if (_object != nullptr) _object->gc_mark();
-	          }
-
             template<class U> friend U* gc_test_access::debug_object(const gc::field<U>& field);
+            friend class gc::object;
     };
 
     template<class T> class field<gc::array<T>>
     {
         private:
             gc::array<T>* _object;
+
+	          void gc_mark()
+	          {
+		            if (_object != nullptr) _object->gc_mark();
+	          }
+
         public:
             field():
                 _object(nullptr)
@@ -114,12 +121,8 @@ namespace gc
                 return (*_object)[i];
             }
 
-	          void gc_mark()
-	          {
-		            if (_object != nullptr) _object->gc_mark();
-	          }
-
             template<class U> friend U* gc_test_access::debug_object(const gc::field<U>& field);
+            friend class gc::object;
     };
 
     template<class T> class field
@@ -130,6 +133,11 @@ namespace gc
             }
 
             T* _object;
+
+	          void gc_mark()
+	          {
+		            if (_object != nullptr) _object->gc_mark();
+	          }
         public:
             field():
                 _object(nullptr)
@@ -172,15 +180,10 @@ namespace gc
 		            if (_object != nullptr) _object->gc_mark();
                 return _object;
 	          }
-
             
 
-	          void gc_mark()
-	          {
-		            if (_object != nullptr) _object->gc_mark();
-	          }
-
             template<class U> friend U* gc_test_access::debug_object(const gc::field<U>& field);
+            friend class gc::object;
     };
 }
 #endif
