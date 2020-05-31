@@ -63,6 +63,11 @@ namespace gc
                 return *this;
             }
 
+            operator gc::dyn_array_impl<T>*() const
+            {
+                return _object;
+            }
+
             gc::field<T>& operator[](int i)
             {
                 return (*_object)[i];
@@ -114,6 +119,11 @@ namespace gc
                     gc::heap::heap_struct::get()->remove_from_initialization_list(_object);
                 }
                 return *this;
+            }
+
+            operator gc::array<T>*() const
+            {
+                return _object;
             }
 
             gc::field<T>& operator[](int i)

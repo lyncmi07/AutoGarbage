@@ -39,6 +39,29 @@ namespace gc
                 gc::heap::heap_struct::get()->add_static(this);
             }
 
+            // Copy constructors
+            static_ptr(const gc::static_ptr<gc::dyn_array_impl<T>>& sptr2):
+                _object(sptr2._object)
+            {
+                gc::heap::heap_struct::get()->add_static(this);
+            }
+            gc::static_ptr<gc::dyn_array_impl<T>>& operator=(const gc::static_ptr<gc::dyn_array_impl<T>>& sptr2)
+            {
+                _object = sptr2._object;
+                return *this;
+            }
+
+            operator gc::dyn_array_impl<T>*() const
+            {
+                return _object;
+            }
+
+            gc::static_ptr<gc::dyn_array_impl<T>>& operator=(gc::dyn_array_impl<T>* object)
+            {
+                _object = object;
+                return *this;
+            }
+
             gc::field<T>& operator[](int i)
             {
                 return (*_object)[i];
@@ -76,6 +99,29 @@ namespace gc
                 gc::heap::heap_struct::get()->add_static(this);
             }
 
+            // Copy constructors
+            static_ptr(const gc::static_ptr<gc::array<T>>& sptr2):
+                _object(sptr2._object)
+            {
+                gc::heap::heap_struct::get()->add_static(this);
+            }
+            gc::static_ptr<gc::array<T>>& operator=(const gc::static_ptr<gc::array<T>>& sptr2)
+            {
+                _object = sptr2._object;
+                return *this;
+            }
+
+            operator gc::array<T>*() const
+            {
+                return _object;
+            }
+
+            gc::static_ptr<gc::array<T>>& operator=(gc::array<T>* object)
+            {
+                _object = object;
+                return *this;
+            }
+
             gc::field<T>& operator[](int i)
             {
                 return (*_object)[i];
@@ -100,14 +146,14 @@ namespace gc
             }
 
             T* _object;
+            static_ptr<gc::object>* _back_static_object;
+            static_ptr<gc::object>* _fwd_static_object;
 
             void gc_mark()
             {
                 if (_object != nullptr) _object->gc_mark();
             }
         public:
-            static_ptr<gc::object>* _back_static_object;
-            static_ptr<gc::object>* _fwd_static_object;
 
             static_ptr():
                 _object(nullptr)
