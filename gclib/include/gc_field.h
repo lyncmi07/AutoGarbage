@@ -68,11 +68,6 @@ namespace gc
 		            if (_object != nullptr) _object->gc_mark();
 	          }
 
-            inline bool holds_valid_object()
-            {
-                return _object != nullptr;
-            }
-
             template<class U> friend U* gc_test_access::debug_object(const gc::field<U>& field);
     };
 
@@ -124,11 +119,6 @@ namespace gc
 		            if (_object != nullptr) _object->gc_mark();
 	          }
 
-            inline bool holds_valid_object()
-            {
-                return _object != nullptr;
-            }
-
             template<class U> friend U* gc_test_access::debug_object(const gc::field<U>& field);
     };
 
@@ -177,23 +167,18 @@ namespace gc
                 return _object;
             }
 
-	        T* operator->()
-	        {
-		        if (_object != nullptr) _object->gc_mark();
+	          T* operator->()
+	          {
+		            if (_object != nullptr) _object->gc_mark();
                 return _object;
-	        }
+	          }
 
             
 
-	        void gc_mark()
-	        {
-		        if (_object != nullptr) _object->gc_mark();
-	        }
-
-            inline bool holds_valid_object()
-            {
-                return _object != nullptr;
-            }
+	          void gc_mark()
+	          {
+		            if (_object != nullptr) _object->gc_mark();
+	          }
 
             template<class U> friend U* gc_test_access::debug_object(const gc::field<U>& field);
     };
