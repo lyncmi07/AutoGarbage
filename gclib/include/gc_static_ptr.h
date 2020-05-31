@@ -117,10 +117,16 @@ namespace gc
                 gc::heap::heap_struct::get()->add_static(this);
             }
 
+            // Copy constructors
             static_ptr(const gc::static_ptr<T>& sptr2):
                 _object(sptr2._object)
             {
                 gc::heap::heap_struct::get()->add_static(this);
+            }
+            gc::static_ptr<T>& operator=(const gc::static_ptr<T>& sptr2)
+            {
+                _object = sptr2._object;
+                return *this;
             }
 
             operator T*() const
@@ -133,6 +139,7 @@ namespace gc
                 _object = object;
                 return *this;
             }
+
 
             ~static_ptr()
             {

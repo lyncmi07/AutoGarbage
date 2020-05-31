@@ -109,9 +109,15 @@ namespace gc
                 if (_object != nullptr && _object->current_mark() == 'I') gc::heap::heap_struct::get()->remove_from_initialization_list(_object);
             }
 
+            // Copy constructors
             field(const field<T> &f2):
                 _object(f2._object)
             {
+            }
+            field<T>& operator=(const field<T>& f2)
+            {
+                _object = f2._object;
+                return *this;
             }
 
             field<T>& operator=(T* o2)
