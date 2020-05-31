@@ -1,8 +1,6 @@
 #ifndef GC_LIB_H
 #define GC_LIB_H
 
-#include <unordered_set>
-
 #include "gc_array.h"
 #include "gc_object.h"
 #include "gc_statics.h"

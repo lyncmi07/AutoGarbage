@@ -1,7 +1,7 @@
 #ifndef GC_LIB_STATICS_H
 #define GC_LIB_STATICS_H
 
-#include <unordered_set>
+#include <cstdlib>
 
 namespace gc
 {
