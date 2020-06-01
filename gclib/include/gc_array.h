@@ -7,6 +7,10 @@
 
 namespace gc
 {
+    /*!
+     * Creates an array of objects of the chosen type.
+     * @param <T> The type of the elements of the array. This must a type of `gc::object`.
+     */
     template<class T>
     class array : public gc::object
     {
@@ -14,6 +18,10 @@ namespace gc
             gc::field<gc::dyn_array_impl<T>> _internal_array;
             END_GC_FIELDS;
         public:
+            /*!
+             * Creates an array of given size.
+             * @param array_size Number of elements the array will be sized to. Arrays cannot be resized after their creation.
+             */
             array(size_t array_size):
                 _internal_array(nullptr)
             {
@@ -30,6 +38,10 @@ namespace gc
                 gc::heap::heap_struct::get()->remove_from_initialization_list(_array_position); // The field expects the object to already have been removed from the initialization list
             }
 
+            /*!
+             * Accesses the elements of the array.
+             * @param i Index of the array element to return.
+             */
             gc::field<T>& operator[](int i)
             {
                 gc_mark();
