@@ -21,6 +21,11 @@ namespace gc
     {
         private:
             gc::dyn_array_impl<T>* _object;
+
+	          void gc_mark()
+	          {
+		            if (_object != nullptr) _object->gc_mark();
+	          }
         public:
             field():
                 _object(nullptr)
@@ -36,28 +41,52 @@ namespace gc
                 }
             }
 
+            // Copy constructors
+            field(const field<T> &f2):
+                _object(f2._object)
+            {
+            }
+            field<gc::dyn_array_impl<T>>& operator=(const field<gc::dyn_array_impl<T>>& f2)
+            {
+                _object = f2._object;
+                return *this;
+            }
+
+            field<gc::dyn_array_impl<T>>& operator=(gc::dyn_array_impl<T>* object)
+            {
+                _object = object;
+
+                if (_object != nullptr && _object->current_mark() == 'I')
+                {
+                    gc::heap::heap_struct::get()->remove_from_initialization_list(_object);
+                }
+                return *this;
+            }
+
+            operator gc::dyn_array_impl<T>*() const
+            {
+                return _object;
+            }
+
             gc::field<T>& operator[](int i)
             {
                 return (*_object)[i];
             }
 
-	        void gc_mark()
-	        {
-		        if (_object != nullptr) _object->gc_mark();
-	        }
-
-            inline bool holds_valid_object()
-            {
-                return _object != nullptr;
-            }
-
             template<class U> friend U* gc_test_access::debug_object(const gc::field<U>& field);
+            friend class gc::object;
     };
 
     template<class T> class field<gc::array<T>>
     {
         private:
             gc::array<T>* _object;
+
+	          void gc_mark()
+	          {
+		            if (_object != nullptr) _object->gc_mark();
+	          }
+
         public:
             field():
                 _object(nullptr)
@@ -70,22 +99,40 @@ namespace gc
                 if (_object != nullptr && _object->current_mark() == 'I') gc::heap::heap_struct::get()->remove_from_initialization_list(_object);
             }
 
+            // Copy constructors
+            field(const field<T> &f2):
+                _object(f2._object)
+            {
+            }
+            field<gc::array<T>>& operator=(const field<gc::array<T>>& f2)
+            {
+                _object = f2._object;
+                return *this;
+            }
+
+            field<gc::array<T>>& operator=(gc::array<T>* object)
+            {
+                _object = object;
+
+                if (_object != nullptr && _object->current_mark() == 'I')
+                {
+                    gc::heap::heap_struct::get()->remove_from_initialization_list(_object);
+                }
+                return *this;
+            }
+
+            operator gc::array<T>*() const
+            {
+                return _object;
+            }
+
             gc::field<T>& operator[](int i)
             {
                 return (*_object)[i];
             }
 
-	        void gc_mark()
-	        {
-		        if (_object != nullptr) _object->gc_mark();
-	        }
-
-            inline bool holds_valid_object()
-            {
-                return _object != nullptr;
-            }
-
             template<class U> friend U* gc_test_access::debug_object(const gc::field<U>& field);
+            friend class gc::object;
     };
 
     template<class T> class field
@@ -96,6 +143,11 @@ namespace gc
             }
 
             T* _object;
+
+	          void gc_mark()
+	          {
+		            if (_object != nullptr) _object->gc_mark();
+	          }
         public:
             field():
                 _object(nullptr)
@@ -133,25 +185,15 @@ namespace gc
                 return _object;
             }
 
-	        T* operator->()
-	        {
-		        if (_object != nullptr) _object->gc_mark();
+	          T* operator->()
+	          {
+		            if (_object != nullptr) _object->gc_mark();
                 return _object;
-	        }
-
+	          }
             
 
-	        void gc_mark()
-	        {
-		        if (_object != nullptr) _object->gc_mark();
-	        }
-
-            inline bool holds_valid_object()
-            {
-                return _object != nullptr;
-            }
-
             template<class U> friend U* gc_test_access::debug_object(const gc::field<U>& field);
+            friend class gc::object;
     };
 }
 #endif

@@ -27,6 +27,7 @@ namespace gc
 
 
                 _internal_array = _array_position;
+                gc::heap::heap_struct::get()->remove_from_initialization_list(_array_position); // The field expects the object to already have been removed from the initialization list
             }
 
             gc::field<T>& operator[](int i)
