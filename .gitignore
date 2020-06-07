@@ -1,5 +1,7 @@
 obj/
 docs/
+report_docs/*.html
+report_docs/*.tex
 
 a.out
 test_build
