@@ -1,11 +1,13 @@
+#+LATEX_HEADER: \usepackage{minted}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{pdftexcmds}
+#+LATEX_HEADER: \usepackage{svg}
+#+LATEX_HEADER: \usepackage[margin=1.0in]{geometry}
+
 #+STARTUP: showall
 #+TITLE: C++ AutoGarbage
 #+SUBTITLE: An automatic mark and sweep garbage collector for the C++ Programming Language
 #+AUTHOR: Michael Lynch
-
-#+LATEX: \usepackage{minted}
-#+LATEX: \usepackage{amsmath}
-#+LATEX_HEADER: \usepackage[margin=1.0in]{geometry}
 
 /Abstract./ C++ has become one of the most popular languages in the world, partially through its capability for very deep control
 over memory mangement.
@@ -44,7 +46,7 @@ class A : gc::object
 }
 #+END_SRC
 
-It is important to note that destructores for garbage collected objects are never called (objects just get overwritten once they are collected)
+It is important to note that destructores for garbage collected objects are never called (objects just get overwritten once  emacs error logsthey are collected)
 so it is inherantly unsafe to use any kind of standard C++ pointer (raw or smart) as a member on a gc::object unless you explicitly manage
 creation and deletion of the objects yourself.
 *** Arrays:
@@ -68,7 +70,8 @@ C++ objects are formatted with the highest class in the inheritance tree placed 
 one object to another without a dedicated runtime casting checker:
 
 #+attr_html: :width 150px :height 500px
-[[./report_srcs/c_plus_plus_casting.svg]]
+#+attr_latex: :height 200px
+[[./c_plus_plus_casting.svg]]
 
 Because of this and the fact that a class wil inherit from the =gc::object= class, the marker is positioned to start
 at =(((char*)this) + sizeof(gc::object))=
@@ -114,7 +117,7 @@ in the heap.
  to allocate:
 
 #+attr_html: :width 150px :height 500px
- [[./report_srcs/collecting_unreferenced_object.svg]]
+ [[./collecting_unreferenced_object.svg]]
 
  If the system is unable to allocate an object after two gc rounds it is highly likely that it is not possible to allocate the given object 
  (This does however depend on the number of allowed allocation loops which will be discussed with regards to the =attempt_allocate= funcction).
@@ -131,13 +134,13 @@ in the heap.
  Links in the treadmill list always point to the =gc::heap::cell= object. This is fine initially as the cell begins at the given pointer position:
 
 #+attr_html: :width 150px :height 300px
- [[./report_srcs/free_cell_allocation.svg]]
+ [[./free_cell_allocation.svg]]
 
  But this will not work if the cell is actually part of a now garbage collected object. In this second case the position of the cell object and
  the position of where that cell actually is are different, due to the additional V-Table pointer.
 
 #+attr_html: :width 150px
- [[./report_srcs/full_object_allocation.svg]]
+ [[./full_object_allocation.svg]]
 
  =malloc= takes this information into account by calling the =gc::heap::cell::actual_position()= member function.
  The contents of this function is set when a =gc::heap::cell= is constructed and gives the data as to whether the cell object is at an offset
@@ -164,7 +167,7 @@ If however the free cell is larger, a cell resize needs to take place by calling
 Cell resizing is performed by moving the start of the free cell object forwards by an amount which is equal to the size of the new object.
 
 #+attr_html: :width 150px :height 200px
-[[./report_srcs/initial_to_resize.svg]]
+[[./initial_to_resize.svg]]
 
 =gc::heap::cell= has a certain amount of data that needs to be stored, such as its size and positions in the 
 treadmill and location lists. Because of this, there is a minimum object size for a given cell. If it is found that the space left
@@ -173,14 +176,14 @@ the memory with its forward neighbout if this is not allocated memory. In this c
 orphan memory which will incorporate the orphan memory along with the forward cell that it is being merged with:
 
 #+attr_html: :width 150px :height 180px
-[[./report_srcs/forward_merge.svg]]
+[[./forward_merge.svg]]
 
 If the forward object is allocated memory then it is noot possible to merge without corruption of the object. So instead, a merge with
 the back object (or more specifically our newly allocated object) is performed which will simply act as padding on the end of the
 object allocation
 
 #+attr_html: :width 150px :height 190px
-[[./report_srcs/backward_merge.svg]]
+[[./backward_merge.svg]]
 
 If a free cell is not large enough to accomodate a new object size, =attempt_allocate= will attempt to merge the current
 free cell with its forward neighbour and try again. If it is unable to merge with its forward neighbout it will move onto the

@@ -1,7 +1,6 @@
 obj/
 docs/
 report_docs/*.html
-report_docs/*.tex
 report_docs/_minted-report/
 
 a.out
