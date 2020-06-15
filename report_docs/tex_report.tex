@@ -67,7 +67,15 @@ similar to those found in more high level languages such as Java or C\#.
 \newpage
 \tableofcontents
 \newpage
+\section{Treadmill Garbage Collection}
+AutoGarbage uses the treadmill garbage collection technique\textsuperscript{\cite{bib:treadmillgc}} to
+free up memory. This is implemented
+on a single threaded basis with all marking and sweeping taking place when the user invokes functions from
+the library.
 
+Currently it is not possible to use AutoGarbage on multi-threaded systems, however treadmill garbage collection
+can very easily be adapted to work on a seperate thread\textsuperscript{[\ref{app:multithreadedmarking}]}
+giving the capability for multi-threaded support in the future.
 \section{Usage}
 The use of several classes and macros are required in order for the user to take advantage of the AutoGarbage memory 
 management system. To start AutoGarbage (AGC), the heap needs to be initiated using:
@@ -349,6 +357,7 @@ that it is safe to merge with free cells.
 \newpage
 \appendix
 \section{Other Approaches Explored for Stopping Marking}
+\label{app:exploredmarkingapproaches}
 A few other approaches were explored to perform the task of stopping the marker as it explores an object prior to the magic
 pointer algorithm that is currently being used within the AutoGarbage program with the goal of reducing the overall memory overhead
 of objects. 
@@ -362,12 +371,37 @@ A slightly different approach that could be taken is to reserve the top bit of t
 heap memory from 64bits to 63.
 
 Unfortunately due to the prominence of little endian formatted computers, applying the current system while only observing the most
-significant byte cannot be used as an optimisation. On beg endian machines, a magic number could be used checking only the most
+significant byte cannot be used as an optimisation. On big endian machines, a magic number could be used checking only the most
 significant byte and omitting the rest of the pointer bringing the overhead back to just a single byte without reducing
 addressable space.
 
 The likely best approach that may be worth moving to in future is the single bit flag within the pointer. This is because although
-it does reduce addressable space, it only reduces it from a possible ~18,446pebibytes to ~9,223pebibytes\ref{}, memory spaces that
-are well beyond any modern computer ever built \ref{}
+it does reduce addressable space, it only reduces 
+it from a possible $\sim$18 exabytes to $\sim$9 exabytes\textsuperscript{[\ref{app:addessablespace}]},
+memory spaces that are well beyond even the largest super computers\textsuperscript{\cite{bib:summitsupercomputer}}
+\subsection{Addressable Space}
+\label{app:addessablespace}
+Addresses in C++ direct to individual bytes. The maximum possible unsigned 64 bit number is
+18,446,744,073,709,551,614. This therefore is approximately 18 exabytes which is addressable. One bit
+used as a separate flag, reduces to $2^{63}$ addresses hence 9 exabytes addressable.
 
+\section{Separate Thread Marking for Multi-Threaded Environments}
+\label{app:multithreadedmarking}
+The current AutoGarbage system performs marking of memory when the program makes accesses to objects
+or when it has run out of memory during an allocation. Another approach that can be taken is to 
+queue up objects to be marked as they get accessed and use a different thread to take objects off of the querue
+and mark them. This approach decouples the programmers threads from the marking process, ensuring that multiple threads
+can access the object at the same time without having to worry about performing the correct marking
+procedure in accordance with the object's current state.
+
+\newpage
+\begin{thebibliography}{9}
+\bibitem{bib:summitsupercomputer}
+2018 Summit Super Computer at Oak Ridge National Laboratory
+
+2,801,664 GB of volatile memory (4,608 nodes of 512 GB DDR4 + 96 GB HBM2)
+\texttt{https://www.olcf.ornl.gov/summit/}
+\bibitem{bib:treadmillgc}
+Baker, Henry. (1995). The Treadmill: Real-Time Garbage Collection Without Motion Sickness. 
+\end{thebibliography}
 \end{document}
