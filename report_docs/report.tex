@@ -16,11 +16,17 @@
 \usepackage{pdfpages}
 \usepackage{ifthen}
 \usepackage{hyperref}
+\usepackage{caption}
 \usepackage{minted}
 \usepackage{minted}
 \usepackage{amsmath}
 \usepackage{pdftexcmds}
 \usepackage{svg}
+\usepackage{titling}
+\renewcommand\maketitlehooka{\null\mbox{}\vfill}
+\renewcommand\maketitlehookd{\vfill\null}
+
+\newenvironment{code}{\captionsetup{type=listing}}{}
 \usepackage[pdftex,letterpaper,margin=1.0in]{geometry}
 \author{Michael Lynch}
 \date{\today}
@@ -35,21 +41,26 @@
  pdflang={English}}
 \begin{document}
 
+\begin{titlingpage}
 \maketitle
+\end{titlingpage}
+
+\newpage
+\vspace*{0.15\textheight}
+\emph{Abstract.} C++ has become one of the most popular languages in the world, partially through its capability for very deep control
+over memory mangement.
+This project takes advantage of C++ power over direct memory, to implement an automatic garbage collection system
+similar to those found in more high level languages such as Java or C\#.
 
 \newpage
 \tableofcontents
 \newpage
 
-\emph{Abstract.} C++ has become one of the most popular languages in the world, partially through its capability for very deep control
-over memory mangement.
-This project takes advantage of C++ power over direct memory to implement an automatic garbage collection system
-similar to those found in more high level languages such as Java or C\#
 \section{Usage}
 \label{sec:orgad3520d}
 The use of several classes and macros are required in order for the user to take advantage of the AutoGarbage memory management system.
-
 To start AutoGarbage (AGC), the heap needs to be initiated using:
+
 \begin{minted}[]{c++}
 gc::init_gc(4096, 25);
 \end{minted}
@@ -57,15 +68,15 @@ gc::init_gc(4096, 25);
 \begin{itemize}
 \item The first parameter provides the size that the heap should be initiated to in bytes.
 \item The second parameter indicates how many times the allocater should attempt to allocate an object before giving up and
-\end{itemize}
 performing a garbage collection.
+\end{itemize}
 
 AGC will heap allocate any object which inherits from the \texttt{gc::object} class.
-
-AGC expects \texttt{gc::object} classes to be formatted with garbage collectable fields (\texttt{gc::field}) first followed by the \texttt{END\_GC\_FIELD} macro,
+AGC expects \texttt{gc::object} classes to be formatted with garbage collectable 
+fields (\texttt{gc::field}) first followed by the \texttt{END\_GC\_FIELD} macro,
 before standard C++ members in the classes memory map.
-\subsubsection{Example Object:}
-\label{sec:org3f6c09e}
+
+\begin{code}
 \begin{minted}[]{c++}
 class A : gc::object
 {
@@ -81,6 +92,9 @@ class A : gc::object
   int b;
 }
 \end{minted}
+\captionof{listing}{Example Object}
+\end{code}
+
 
 It is important to note that destructores for garbage collected objects are never called (objects just get overwritten once  emacs error logsthey are collected)
 so it is inherantly unsafe to use any kind of standard C++ pointer (raw or smart) as a member on a gc::object unless you explicitly manage
