@@ -1,5 +1,7 @@
 obj/
 docs/
+report_docs/*.html
+report_docs/_minted-report/
 
 a.out
 test_build
