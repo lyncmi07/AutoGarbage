@@ -344,7 +344,7 @@ The standard approach for memory management in C++ is to perform reference count
 references that are pointing to a given object, and then once no references are left, delete the object. AutoGarbage uses
 mark and sweep which will instead, as the program is being executed, gradual;ly mark out and reveal the memory cells which are still
 being referenced.
-The underlying effect of thie method of memory management is that objects tend to stay allocated a little longer than they 
+The underlying effect of this method of memory management is that objects tend to stay allocated a little longer than they 
 are atually required to be. This means that the amount of memory used by a program at any time is going to be slightly greater
 than what is actually require, simply because a gc cycle has yet to occur, or an objects gets sent to the grey/black list 
 just before it gets dereferenced.
@@ -362,11 +362,12 @@ A few other approaches were explored to perform the task of stopping the marker 
 pointer algorithm that is currently being used within the AutoGarbage program with the goal of reducing the overall memory overhead
 of objects. 
 
-The magic pointer technique requires an 8 byte overhead on 64 bit systems. This compares to a field flag technique which would
+The magic pointer technique (figure \ref{fig:mark:magicpointer}) requires an 8 byte overhead on 64 bit systems.
+This compares to a field flag technique (figure \ref{fig:mark:fieldmemberflag}) which would
 have added a byte to the top of the field class which could have a different value to a \texttt{END\_GC\_FIELDS} added member byte 
 at the end of the field list. This approach is better so long as a class has fewer than 7 fields (each field has an extra byte 
 along with the \texttt{END\_GC\_FIELD} byte makes the 8 bytes taken by the magic pointer technique).
-A slightly different approach that could be taken is to reserve the top bit of the fields pointer to use in the marking system
+A slightly different approach that could be taken is to reserve the top bit of the fields pointer to use in the marking system (figure \ref{fig:mark:onpointerflag})
 (set to 0 on fields). This approach would allow for an overhead of only a single byte at the expense of reducing the addressable 
 heap memory from 64bits to 63.
 
@@ -379,6 +380,23 @@ The likely best approach that may be worth moving to in future is the single bit
 it does reduce addressable space, it only reduces 
 it from a possible $\sim$18 exabytes to $\sim$9 exabytes\textsuperscript{[\ref{app:addessablespace}]},
 memory spaces that are well beyond even the largest super computers\textsuperscript{\cite{bib:summitsupercomputer}}
+
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.5]{./report_srcs/heap_memory_only.png}
+\includegraphics[scale=0.5]{./report_srcs/magic_pointer_technique.png}
+\caption{Magic Pointer Technique}
+\label{fig:mark:magicpointer}
+\includegraphics[scale=0.5]{./report_srcs/field_member_flag_technique.png}
+\caption{Field Member Flag Technique}
+\label{fig:mark:fieldmemberflag}
+\includegraphics[scale=0.5]{./report_srcs/on_pointer_bit_flag_technique.png}
+\caption{On Pointer Bit Flag Technique}
+\label{fig:mark:onpointerflag}
+\end{center}
+\end{figure}
+
 \subsection{Addressable Space}
 \label{app:addessablespace}
 Addresses in C++ direct to individual bytes. The maximum possible unsigned 64 bit number is
@@ -403,5 +421,10 @@ procedure in accordance with the object's current state.
 \texttt{https://www.olcf.ornl.gov/summit/}
 \bibitem{bib:treadmillgc}
 Baker, Henry. (1995). The Treadmill: Real-Time Garbage Collection Without Motion Sickness. 
+
+%Concurrent mark and sweep for java, probably worth mentioning
+%https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/cms.html
+
+%If intending on looking at future possible generational systems also look to java docs
 \end{thebibliography}
 \end{document}
