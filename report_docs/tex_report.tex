@@ -391,6 +391,11 @@ memory spaces that are well beyond even the largest super computers\textsuperscr
 \includegraphics[scale=0.5]{./report_srcs/field_member_flag_technique.png}
 \caption{Field Member Flag Technique}
 \label{fig:mark:fieldmemberflag}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
 \includegraphics[scale=0.5]{./report_srcs/on_pointer_bit_flag_technique.png}
 \caption{On Pointer Bit Flag Technique}
 \label{fig:mark:onpointerflag}
@@ -407,10 +412,17 @@ used as a separate flag, reduces to $2^{63}$ addresses hence 9 exabytes addressa
 \label{app:multithreadedmarking}
 The current AutoGarbage system performs marking of memory when the program makes accesses to objects
 or when it has run out of memory during an allocation. Another approach that can be taken is to 
-queue up objects to be marked as they get accessed and use a different thread to take objects off of the querue
-and mark them. This approach decouples the programmers threads from the marking process, ensuring that multiple threads
+queue up objects to be marked as they get accessed and use a different thread to take objects off of the queue
+and mark them (figure \ref{fig:concurrentmarking}). This approach decouples the programmers threads from the marking process, ensuring that multiple threads
 can access the object at the same time without having to worry about performing the correct marking
 procedure in accordance with the object's current state.
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.5]{./report_srcs/concurrent_marking.png}
+\caption{Concurrent Marking Technique}
+\label{fig:concurrentmarking}
+\end{center}
+\end{figure}
 
 \newpage
 \begin{thebibliography}{9}
