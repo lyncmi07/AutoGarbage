@@ -39,7 +39,8 @@ gc::init_gc(4096, 25)
 
 AutoGarbage also supports reference arrays to garbage collectable objects:
 ``` C++
-gc::static_ptr<gc::array<B>> b_array = new gc::array<B>(10); //Creates a static pointer (which is removed when unscoped) to an array
+//Creates a static pointer (which is removed when unscoped) to an array
+gc::static_ptr<gc::array<B>> b_array = new gc::array<B>(10);
 ```
 
 ## Building
@@ -47,4 +48,5 @@ To build, call `make`, this will produce the `gclib/lib/libgc.a` library file. T
 as well as using all the header files found in `gclib/include`
 
 ## Find out more
-Find more detail on this project by reading the [[report]] on how it works and using the [[documentation]]
+Find more detail on this project by reading the [https://github.com/lyncmi07/AutoGarbage_documentation/blob/master/report.pdf][report]
+on how it works and using the [https://github.com/lyncmi07/AutoGarbage_documentation/blob/master/documentation.pdf][documentation].
