@@ -13,8 +13,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: prepare
-      run: mkdir gclib/lib gclib/obj obj
     - name: make
       run: make
     - name: make test
