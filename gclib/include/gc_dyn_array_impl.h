@@ -1,6 +1,7 @@
 #ifndef GC_LIB_DYN_ARRAY_IMPL_H
 #define GC_LIB_DYN_ARRAY_IMPL_H
 
+#include <cstring>
 #include "gc_object.h"
 
 namespace gc
