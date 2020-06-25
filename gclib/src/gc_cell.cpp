@@ -128,7 +128,7 @@ gc::heap::cell* gc::heap::cell::resize(size_t size_decrease)
             //Keep the memory allocated in the newly created cell
 
             unlink_treadmill();
-            // _size += new_size;
+            _size += new_size;
             return nullptr;
         }
     }
