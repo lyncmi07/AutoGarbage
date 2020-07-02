@@ -4,6 +4,7 @@
 #include "AllocationCorrectnessTests.h"
 #include "MultiReferenceCorrectnessTests.h"
 #include "ReferenceChangeFlipCorrectnessTests.h"
+#include "UsabilityTests.h"
 #include "ArrayTests.h"
 
 int main()
@@ -18,6 +19,7 @@ int main()
     RUN_TEST_SUITE(MultiReferenceCorrectnessTests);
     RUN_TEST_SUITE(ReferenceChangeFlipCorrectnessTests);
     RUN_TEST_SUITE(ArrayTests);
+    RUN_TEST_SUITE(UsabilityTests);
 
     #if (PERFORMANCE_TIMERS)
         scoped_timer::print_info();
