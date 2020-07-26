@@ -141,7 +141,7 @@ bool gc::heap::cell::mergable_with_back_location() const
 
 bool gc::heap::cell::mergable_with_fwd_location() const
 {
-    void* contiguous_position = (void*)((char*)actual_position()) + size();
+    void* contiguous_position = (void*)((long)((char*)actual_position()) + size());
 
     return contiguous_position == (void*)((char*)fwd_location()->actual_position());
 }
