@@ -58,9 +58,9 @@ gc::heap::heap_struct::~heap_struct()
 gc::heap::cell* gc::heap::heap_struct::attempt_allocate(size_t size)
 {
     #if (PERFORMANCE_TIMERS)
-        _total_bytes_allocated += size;
         scoped_timer t(timer_group::TIMER_ATTEMPT_ALLOCATE);
     #endif
+    _total_bytes_allocated += size;
 
     gc::heap::cell* next_free_cell = free();
     gc::heap::cell* current_largest_cell = free();
@@ -231,9 +231,7 @@ void gc::heap::heap_struct::print_gc_info()
         << "gc_cycle:" << _garbage_collection_cycle
         << " lost_cells:" << _fragment_memory_list.size()
         << " lost_size:" << _fragment_size
-        #if (PERFORMANCE_TIMERS)
         << " total_bytes_allocated:" << _total_bytes_allocated
-        #endif
         << std::endl;
 }
 
