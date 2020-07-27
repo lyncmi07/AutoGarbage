@@ -48,5 +48,5 @@ To build, call `make`, this will produce the `gclib/lib/libgc.a` library file. T
 as well as using all the header files found in `gclib/include`
 
 ## Find out more
-Find more detail on this project by reading the [report](https://github.com/lyncmi07/AutoGarbage_documentation/blob/master/report.pdf)
+Find more detail on this project by reading the [report](http://www.supermarinesoftware.com/autogarbage)
 on how it works and using the [documentation](https://github.com/lyncmi07/AutoGarbage_documentation/blob/master/documentation.pdf).
