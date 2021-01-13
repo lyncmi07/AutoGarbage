@@ -1,5 +1,6 @@
 obj/
-docs/
+docs/html
+docs/latex
 report_docs/*.html
 report_docs/_minted-report/
 
