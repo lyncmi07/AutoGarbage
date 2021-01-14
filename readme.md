@@ -49,4 +49,4 @@ as well as using all the header files found in `gclib/include`
 
 ## Find out more
 Find more detail on this project by reading the [report](http://www.supermarinesoftware.com/autogarbage)
-on how it works and using the [documentation](https://docs.supermarinesoftware.com/autogarbage.git/dd/d9b/namespacegc.html).
+on how it works and using the [documentation](https://docs.supermarinesoftware.com/autogarbage.git).
