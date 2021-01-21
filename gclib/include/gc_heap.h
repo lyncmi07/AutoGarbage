@@ -90,9 +90,6 @@ namespace gc
             void print_static_objects_list();
             void print_heap_pointers();
 
-            void print_gc_debug();
-            void print_gc_info();
-
             gc::heap::cell* attempt_allocate(size_t size);
 
             void* malloc(size_t size);
@@ -157,6 +154,9 @@ namespace gc
             {
                 return INSTANCE;
             }
+
+            void print_gc_debug();
+            void print_gc_info();
 
     };
 }}

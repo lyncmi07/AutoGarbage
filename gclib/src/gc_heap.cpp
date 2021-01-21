@@ -7,6 +7,7 @@
 #include <new>
 #include <iostream>
 #include <variant>
+#include <cstdlib>
 
 gc::heap::heap_struct* gc::heap::heap_struct::INSTANCE = nullptr;
 
@@ -17,7 +18,8 @@ gc::heap::fragment_memory::fragment_memory(void* _fragment_position, size_t _siz
 gc::heap::heap_struct::heap_struct(size_t heap_size, unsigned int max_allocation_attempts_before_gc):
     _heap_size(heap_size),
     _max_allocation_attempts_before_gc(max_allocation_attempts_before_gc),
-    _heap_space((void*) new char[_heap_size]),
+    // _heap_space((void*) new char[_heap_size]),
+    _heap_space(::malloc(_heap_size * sizeof(char))),
     _end_gc_fields_magic_ptr(((char*)_heap_space) - 1),
     _total_bytes_allocated(0),
     _bottom(new gc::heap::cell(nullptr, nullptr, 0, false, 0)),
@@ -47,7 +49,7 @@ gc::heap::heap_struct::heap_struct(size_t heap_size, unsigned int max_allocation
 
 gc::heap::heap_struct::~heap_struct()
 {
-    delete _heap_space;
+    ::free(_heap_space);
     delete _bottom;
     delete _top;
     delete _scan;
