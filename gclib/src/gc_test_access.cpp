@@ -13,26 +13,26 @@ void gc_test_access::collect_garbage()
 
 gc::object* gc_test_access::bottom()
 {
-    gc::heap::heap_struct::get()->bottom();
+    return gc::heap::heap_struct::get()->bottom();
 }
 gc::object* gc_test_access::top()
 {
-    gc::heap::heap_struct::get()->top();
+    return gc::heap::heap_struct::get()->top();
 }
 gc::object* gc_test_access::scan()
 {
-    gc::heap::heap_struct::get()->scan();
+    return gc::heap::heap_struct::get()->scan();
 }
 gc::heap::cell* gc_test_access::free()
 {
-    gc::heap::heap_struct::get()->free();
+    return gc::heap::heap_struct::get()->free();
 }
 
 gc::heap::cell* gc_test_access::back_treadmill(const gc::heap::cell* cell)
 {
-    cell->back_treadmill();
+    return cell->back_treadmill();
 }
 gc::heap::cell* gc_test_access::fwd_treadmill(const gc::heap::cell* cell)
 {
-    cell->fwd_treadmill();
+    return cell->fwd_treadmill();
 }
